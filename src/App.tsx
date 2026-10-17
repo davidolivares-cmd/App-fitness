@@ -399,44 +399,41 @@ function App() {
     setRecipeMessage(''); setRecipeResults([])
     const enteredLimit = Number(recipeCalorieLimit)
     const limit = Number.isFinite(enteredLimit) && enteredLimit >= 100 && enteredLimit <= 2000 ? enteredLimit : 2000
-    if (mode === 'pantry') {
-      const parsedIngredients = ingredientText.split(/[,;\n]+/).map((item) => item.trim().slice(0, 80)).filter(Boolean)
-      const supplied = [...new Map(parsedIngredients.map((item) => [normalizeIngredient(item), item])).values()].slice(0, 20)
-      if (supplied.length < 2) { setRecipeMessage('Escribe al menos dos ingredientes para que la IA pueda proponerte recetas relacionadas.'); return }
-      setAiRecipeBusy(true)
-      try {
-        const { data: result, error: invokeError } = await supabase.functions.invoke<{ recipes: Array<{ name: string; type: MealType; minutes: number; description: string; ingredients: Array<{ name: string; grams: number; caloriesPer100g: number; proteinPer100g: number; carbsPer100g: number; fatPer100g: number }>; steps: string[] }> }>('forma-ai', { body: { action: 'recipes', ingredients: supplied, mealType: recipeTypeFilter, maxCalories: limit, prioritizeProtein: proteinPriority } })
-        if (invokeError) throw new Error('No se pudo consultar la IA. Comprueba que la función está desplegada y configurada en Supabase.')
-        const candidates = (result?.recipes ?? []).map((candidate, index): Recipe | null => {
-          const ingredients = candidate.ingredients.filter((item) => item.name?.trim() && Number.isFinite(item.grams) && item.grams > 0 && [item.caloriesPer100g, item.proteinPer100g, item.carbsPer100g, item.fatPer100g].every((value) => Number.isFinite(value) && value >= 0)).map((item) => ({ ...item, name: item.name.trim() }))
-          if (!candidate.name?.trim() || !ingredients.length || !Array.isArray(candidate.steps)) return null
-          const normalizedRecipeIngredients = ingredients.map((item) => normalizeIngredient(item.name))
-          const matchedInputs = supplied.filter((input) => normalizedRecipeIngredients.some((item) => item.includes(normalizeIngredient(input)) || normalizeIngredient(input).includes(item)))
-          const missing = ingredients.filter((item) => !matchedInputs.some((input) => normalizeIngredient(item.name!).includes(normalizeIngredient(input)) || normalizeIngredient(input).includes(normalizeIngredient(item.name!)))).map((item) => item.name!)
-          const recipe: Recipe = { id: `ai-${Date.now()}-${index}`, name: candidate.name.trim(), type: candidate.type, time: candidate.minutes, description: candidate.description, image: recipeImageFor(`${candidate.name} ${ingredients.map((item) => item.name).join(' ')}`), ingredients, steps: candidate.steps, isAiGenerated: true, imageIsIllustrative: true, matchCount: matchedInputs.length, missing }
-          return recipe
-        }).filter((recipe): recipe is Recipe => recipe !== null && recipe.matchCount! >= Math.min(2, supplied.length))
-          .filter((recipe) => recipeTypeFilter === 'Cualquiera' || recipe.type === recipeTypeFilter)
-          .filter((recipe) => recipeMacros(recipe).calories <= limit)
-        if (!candidates.length) { setRecipeMessage('La IA no encontró una propuesta que use al menos dos de tus ingredientes dentro de esos filtros. Prueba a cambiar el tipo de plato o el máximo de calorías.'); return }
-        if (proteinPriority) candidates.sort((a, b) => recipeMacros(b).protein / Math.max(1, recipeMacros(b).calories) - recipeMacros(a).protein / Math.max(1, recipeMacros(a).calories))
+    const parsedIngredients = mode === 'pantry' ? ingredientText.split(/[,;\n]+/).map((item) => item.trim().slice(0, 80)).filter(Boolean) : []
+    const supplied = [...new Map(parsedIngredients.map((item) => [normalizeIngredient(item), item])).values()].slice(0, 20)
+    if (mode === 'pantry' && supplied.length < 2) { setRecipeMessage('Escribe al menos dos ingredientes para que la IA pueda proponerte recetas relacionadas.'); return }
+    setAiRecipeBusy(true)
+    try {
+      const { data: result, error: invokeError } = await supabase.functions.invoke<{ recipes: Array<{ name: string; type: MealType; minutes: number; description: string; ingredients: Array<{ name: string; grams: number; caloriesPer100g: number; proteinPer100g: number; carbsPer100g: number; fatPer100g: number }>; steps: string[] }> }>('forma-ai', { body: { action: 'recipes', mode, ingredients: supplied, mealType: recipeTypeFilter, maxCalories: limit, prioritizeProtein: proteinPriority } })
+      if (invokeError) throw new Error('No se pudo consultar la IA. Comprueba que la función está desplegada y configurada en Supabase.')
+      const candidates = (result?.recipes ?? []).map((candidate, index): Recipe | null => {
+        if (!candidate || typeof candidate.name !== 'string' || !Array.isArray(candidate.ingredients) || !Array.isArray(candidate.steps)) return null
+        const ingredients = candidate.ingredients.filter((item) => item?.name?.trim() && Number.isFinite(item.grams) && item.grams > 0 && [item.caloriesPer100g, item.proteinPer100g, item.carbsPer100g, item.fatPer100g].every((value) => Number.isFinite(value) && value >= 0)).map((item) => ({ ...item, name: item.name.trim() }))
+        if (!ingredients.length) return null
+        const normalizedRecipeIngredients = ingredients.map((item) => normalizeIngredient(item.name))
+        const matchedInputs = supplied.filter((input) => normalizedRecipeIngredients.some((item) => item.includes(normalizeIngredient(input)) || normalizeIngredient(input).includes(item)))
+        const missing = mode === 'pantry' ? ingredients.filter((item) => !matchedInputs.some((input) => normalizeIngredient(item.name!).includes(normalizeIngredient(input)) || normalizeIngredient(input).includes(normalizeIngredient(item.name!)))).map((item) => item.name!) : []
+        const recipe: Recipe = { id: `ai-${Date.now()}-${index}`, name: candidate.name.trim(), type: candidate.type, time: candidate.minutes, description: candidate.description, image: recipeImageFor(`${candidate.name} ${ingredients.map((item) => item.name).join(' ')}`), ingredients, steps: candidate.steps, isAiGenerated: true, imageIsIllustrative: true, matchCount: matchedInputs.length, missing }
+        return recipe
+      }).filter((recipe): recipe is Recipe => recipe !== null && (mode === 'random' || recipe.matchCount! >= Math.min(2, supplied.length)))
+        .filter((recipe) => recipeTypeFilter === 'Cualquiera' || recipe.type === recipeTypeFilter)
+        .filter((recipe) => recipeMacros(recipe).calories <= limit)
+      if (!candidates.length) {
+        setRecipeMessage(mode === 'pantry'
+          ? 'La IA no encontró una propuesta que use al menos dos de tus ingredientes dentro de esos filtros. Prueba a cambiar el tipo de plato o el máximo de calorías.'
+          : 'La IA no encontró una receta dentro de esos filtros. Prueba a aumentar el máximo de calorías o cambia el tipo de plato.')
+        return
+      }
+      if (proteinPriority) candidates.sort((a, b) => recipeMacros(b).protein / Math.max(1, recipeMacros(b).calories) - recipeMacros(a).protein / Math.max(1, recipeMacros(a).calories))
+      if (mode === 'pantry') {
         setRecipeResults(candidates.slice(0, 3)); setRecipeMessage('Propuestas generadas con IA a partir de tus ingredientes. Revisa cantidades y valores nutricionales; son estimaciones. Las fotos son orientativas.')
-      } catch (cause) {
-        setRecipeMessage(cause instanceof Error ? cause.message : 'No se pudo generar recetas. Comprueba la conexión y la configuración de IA.')
-      } finally { setAiRecipeBusy(false) }
-      return
-    }
-    const candidates = recipeCatalog.filter((recipe) => recipeTypeFilter === 'Cualquiera' || recipe.type === recipeTypeFilter).map((recipe) => {
-      const { macros } = recipeFromCatalog(recipe)
-      return { ...recipe, calories: Math.round(macros.calories), protein: macros.protein }
-    }).filter((recipe) => recipe.calories <= limit)
-    if (!candidates.length) { setRecipeMessage('No encontramos recetas con esos filtros. Prueba a aumentar el límite de calorías o cambia el tipo de plato.'); return }
-    if (mode === 'random') {
-      if (proteinPriority) candidates.sort((a, b) => b.protein / b.calories - a.protein / a.calories)
-      const pool = proteinPriority ? candidates.slice(0, Math.min(3, candidates.length)) : candidates
-      const pick = pool[Math.floor(Math.random() * pool.length)]
-      setRecipeResults([pick]); setRecipeMessage('Receta del catálogo seleccionada al azar. Los valores nutricionales son aproximados.')
-    }
+      } else {
+        const pick = proteinPriority ? candidates[0] : candidates[Math.floor(Math.random() * candidates.length)]
+        setRecipeResults([pick]); setRecipeMessage('Receta sorpresa generada por IA. Revisa cantidades y valores nutricionales; son estimaciones. La foto es orientativa.')
+      }
+    } catch (cause) {
+      setRecipeMessage(cause instanceof Error ? cause.message : 'No se pudo generar recetas. Comprueba la conexión y la configuración de IA.')
+    } finally { setAiRecipeBusy(false) }
   }
 
   const saveProfile = (event: FormEvent<HTMLFormElement>) => {
@@ -540,7 +537,7 @@ function App() {
 
     {dialog === 'food' && <Modal title={`Añadir ${mealType.toLowerCase()}`} eyebrow="DIARIO DE ALIMENTACIÓN" className="food-modal" onClose={() => setDialog(null)}><form onSubmit={addMeal}><label className="form-field"><span>Nombre de la comida (opcional)</span><input className="text-input" value={mealName} onChange={(event) => setMealName(event.target.value)} placeholder="Ej.: tostada con tomate" /></label><label className="form-field"><span>Tipo</span><span className="select-wrap"><select value={mealType} onChange={(event) => setMealType(event.target.value as MealType)}>{mealTypes.map((type) => <option key={type}>{type}</option>)}</select><ChevronDown size={16} /></span></label><FoodDraftEditor rows={foodDraft} onChange={setFoodDraft} onEstimateFood={estimateFoodWithAI} /><div className="nutrition-preview"><strong>Estimación de esta comida</strong><span>{Math.round(mealDraftMacros.calories)} kcal</span><small>{Math.round(mealDraftMacros.protein)} g proteína · {Math.round(mealDraftMacros.carbs)} g hidratos · {Math.round(mealDraftMacros.fat)} g grasas</small></div><button className="primary-button find-recipe-button" type="submit"><Check size={17} /> Guardar en mi diario</button><button className="inline-link-button" type="button" onClick={() => { setRecipeName(mealName); setMealType(mealType); setRecipeDraft(foodDraft.map((row) => ({ ...row, id: crypto.randomUUID() }))); setRecipePhoto(null); setRecipeError(''); setDialog('custom-recipe') }}>Guardar estos ingredientes como receta</button><p className="modal-footnote">Valores aproximados por 100 g. Puedes introducir otro alimento y sus datos nutricionales manualmente.</p></form></Modal>}
 
-    {dialog === 'random' && <Modal title="Crear comida" eyebrow="RECETA ALEATORIA" className="recipe-modal" onClose={() => setDialog(null)}><p className="modal-subtitle">Una idea de nuestro catálogo, filtrada por tus preferencias.</p><div className="creator-filter-grid"><label className="form-field"><span>Tipo de plato</span><span className="select-wrap"><select value={recipeTypeFilter} onChange={(event) => setRecipeTypeFilter(event.target.value as typeof recipeTypeFilter)}><option>Cualquiera</option>{mealTypes.map((type) => <option key={type}>{type}</option>)}</select><ChevronDown size={16} /></span></label><label className="form-field"><span>Máximo de calorías</span><span className="number-wrap"><input type="number" min="100" max="2000" value={recipeCalorieLimit} onChange={(event) => setRecipeCalorieLimit(event.target.value)} /><small>kcal/ración</small></span></label></div><label className="protein-toggle"><span className="toggle-copy"><span><Target size={17} /> Priorizar proteínas</span><small>Ordena por proteína respecto a las calorías.</small></span><input type="checkbox" checked={proteinPriority} onChange={(event) => setProteinPriority(event.target.checked)} /><span className="toggle-ui" /></label><button className="primary-button find-recipe-button" onClick={() => findRecipes('random')}>Sorpréndeme con una receta <ArrowRight size={17} /></button><RecipeResults recipes={recipeResults} message={recipeMessage} onOpen={setSelectedRecipe} onAdd={addRecipeMeal} showMatches={false} /></Modal>}
+    {dialog === 'random' && <Modal title="Crear comida" eyebrow="RECETA ALEATORIA CON IA" className="recipe-modal" onClose={() => setDialog(null)}><p className="modal-subtitle">La IA crea una receta sorpresa según tus filtros.</p><div className="creator-filter-grid"><label className="form-field"><span>Tipo de plato</span><span className="select-wrap"><select value={recipeTypeFilter} onChange={(event) => setRecipeTypeFilter(event.target.value as typeof recipeTypeFilter)}><option>Cualquiera</option>{mealTypes.map((type) => <option key={type}>{type}</option>)}</select><ChevronDown size={16} /></span></label><label className="form-field"><span>Máximo de calorías</span><span className="number-wrap"><input type="number" min="100" max="2000" value={recipeCalorieLimit} onChange={(event) => setRecipeCalorieLimit(event.target.value)} /><small>kcal/ración</small></span></label></div><label className="protein-toggle"><span className="toggle-copy"><span><Target size={17} /> Priorizar proteínas</span><small>Ordena por proteína respecto a las calorías.</small></span><input type="checkbox" checked={proteinPriority} onChange={(event) => setProteinPriority(event.target.checked)} /><span className="toggle-ui" /></label><button className="primary-button find-recipe-button" disabled={aiRecipeBusy} onClick={() => void findRecipes('random')}>{aiRecipeBusy ? 'Creando receta con IA…' : 'Sorpréndeme con una receta'} <ArrowRight size={17} /></button><RecipeResults recipes={recipeResults} message={recipeMessage} onOpen={setSelectedRecipe} onAdd={addRecipeMeal} showMatches={false} busy={aiRecipeBusy} /><p className="modal-footnote">La receta y sus macros son estimaciones generadas por IA; revisa las cantidades y la preparación. La foto es orientativa.</p></Modal>}
 
     {dialog === 'pantry' && <Modal title="Cocina con lo que tienes" eyebrow="RECETAS PERSONALIZADAS CON IA" className="recipe-modal" onClose={() => setDialog(null)}><label className="form-field"><span>¿Qué tienes en casa?</span><textarea rows={3} value={ingredientText} onChange={(event) => setIngredientText(event.target.value)} placeholder="Ej.: pollo, arroz, tomate, pimiento" /><small>Separa los ingredientes por comas. La IA intentará usar al menos dos e indicará qué te falta.</small></label><div className="creator-filter-grid"><label className="form-field"><span>Tipo de plato</span><span className="select-wrap"><select value={recipeTypeFilter} onChange={(event) => setRecipeTypeFilter(event.target.value as typeof recipeTypeFilter)}><option>Cualquiera</option>{mealTypes.map((type) => <option key={type}>{type}</option>)}</select><ChevronDown size={16} /></span></label><label className="form-field"><span>Máximo de calorías</span><span className="number-wrap"><input type="number" min="100" max="2000" value={recipeCalorieLimit} onChange={(event) => setRecipeCalorieLimit(event.target.value)} /><small>kcal/ración</small></span></label></div><label className="protein-toggle"><span className="toggle-copy"><span><Target size={17} /> Priorizar proteínas</span><small>Ordena las recetas generadas por su proteína.</small></span><input type="checkbox" checked={proteinPriority} onChange={(event) => setProteinPriority(event.target.checked)} /><span className="toggle-ui" /></label><button className="primary-button find-recipe-button" disabled={aiRecipeBusy} onClick={() => void findRecipes('pantry')}>{aiRecipeBusy ? 'Generando recetas…' : 'Crear recetas con mis ingredientes'} <ArrowRight size={17} /></button><RecipeResults recipes={recipeResults} message={recipeMessage} onOpen={setSelectedRecipe} onAdd={addRecipeMeal} showMatches busy={aiRecipeBusy} /><p className="modal-footnote">La IA puede equivocarse: revisa alérgenos, preparación y cantidades. Los valores nutricionales y las fotos son orientativos.</p></Modal>}
 
@@ -615,7 +612,7 @@ function ExerciseImage({ index, name }: { index: number; name: string }) {
   const individualImage = individualExerciseIllustrations[index]
   const imageUrl = individualImage
     ? `${import.meta.env.BASE_URL}exercises/${individualImage}`
-    : `${import.meta.env.BASE_URL}exercises/exercise-sprite-v2.webp`
+    : `${import.meta.env.BASE_URL}exercises/exercise-sprite-v3.webp`
   return <div className="exercise-art exercise-photo" role="img" aria-label={`Ilustración de ${name}`} style={{ backgroundImage: `url("${imageUrl}")`, backgroundPosition: individualImage ? 'center' : `${col / 4 * 100}% ${row / 14 * 100}%`, backgroundSize: individualImage ? 'contain' : '500% 1500%', backgroundRepeat: 'no-repeat' }} />
 }
 function RecipeResults({ recipes, message, onOpen, onAdd, showMatches, busy = false }: { recipes: Recipe[]; message: string; onOpen: (recipe: Recipe) => void; onAdd: (recipe: Recipe) => void; showMatches: boolean; busy?: boolean }) {
