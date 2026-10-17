@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
@@ -539,3 +540,180 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 .servings-note { margin: -4px 0 10px !important; color: #879287 !important; font-size: 10px !important; }
+
+/* Account-backed data, exercise library, nutrition logging and progress setup */
+.save-pill.saving .status-dot { background: #d6a965; box-shadow: 0 0 0 3px #f7efdf; }
+.save-pill.error .status-dot, .save-pill.setup .status-dot { background: #b97a70; box-shadow: 0 0 0 3px #f8eae7; }
+.data-banner { display: flex; align-items: flex-start; gap: 9px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid #eadfca; border-radius: 12px; background: #fffaf0; color: #79663e; font-size: 11px; line-height: 1.55; }
+.data-banner svg { flex: 0 0 auto; margin-top: 1px; }
+.data-banner.error { border-color: #f0d1cd; background: #fff5f3; color: #a33d32; }
+.week-navigation { display: flex; align-items: center; gap: 7px; }
+.week-navigation .icon-button { width: 33px; height: 33px; }
+.routine-actions { display: flex; align-items: center; gap: 16px; }
+.workout-empty { display: flex; align-items: center; flex-direction: column; gap: 8px; padding: 27px 14px 14px; color: #64846a; text-align: center; }
+.workout-empty strong { color: #3c5541; font-size: 13px; }
+.workout-empty span { max-width: 360px; color: #849087; font-size: 11px; line-height: 1.6; }
+.exercise-photo { background-size: 500% 1500%; background-repeat: no-repeat; background-color: #f0f3ed; }
+.exercise-card .exercise-photo { min-height: 142px; }
+.picker-exercise-details { border: 1px solid #e9eee7; border-radius: 14px; overflow: hidden; }
+.picker-exercise-details[open] { border-color: #cadac8; }
+.picker-exercise { display: flex; align-items: center; gap: 12px; padding: 9px; border: 0; border-radius: 0; background: #fff; list-style: none; cursor: pointer; }
+.picker-exercise::-webkit-details-marker { display: none; }
+.picker-exercise > .exercise-photo { width: 82px; height: 66px; min-height: 66px; flex: 0 0 auto; border-radius: 9px; }
+.picker-exercise-info { display: grid; gap: 4px; min-width: 0; flex: 1; }
+.picker-exercise-info strong { font-size: 12px; }
+.picker-exercise-info span { color: #738277; font-size: 10px; }
+.picker-exercise-info small { color: #98a197; font-size: 9px; }
+.picker-action-label { flex: 0 0 auto; color: #507755; font-size: 10px; font-weight: 700; }
+.picker-exercise-detail { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; padding: 0 12px 12px 103px; }
+.picker-exercise-detail p { flex: 1 1 100%; margin: 0; color: #758277; font-size: 10px; line-height: 1.6; }
+.picker-exercise-detail > span { color: #89948a; font-size: 10px; }
+.exercise-modal { max-width: 760px; }
+.modal-body { min-height: 0; padding: 0 24px 24px; overflow-y: auto; overscroll-behavior: contain; }
+.modal-body-compact { padding-bottom: 20px; }
+.modal-panel:not(.recipe-detail-modal) { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+.modal-panel:not(.recipe-detail-modal) > .modal-heading { flex: 0 0 auto; position: relative; z-index: 2; margin: 0; padding: 22px 24px 15px; border-bottom: 1px solid #eef1ec; background: #fff; }
+.modal-heading h2 { overflow-wrap: anywhere; }
+.modal-close { position: sticky; top: 0; }
+.modal-subtitle { margin: -3px 0 16px; color: #7c897e; font-size: 11px; line-height: 1.6; }
+.text-input, .form-field > input:not([type='file']) { width: 100%; min-width: 0; height: 43px; padding: 0 11px; border: 1px solid #e1e8de; border-radius: 10px; background: #fbfcfa; color: #354a3a; font: inherit; font-size: 12px; }
+.form-field textarea { min-height: 92px; }
+.form-field select, .form-field input, .form-field textarea { color: #354a3a; }
+.form-field select:focus, .form-field input:focus, .form-field textarea:focus { outline: 2px solid rgba(80,128,88,.3); outline-offset: 1px; }
+.text-input::placeholder { color: #9aa49b; }
+.food-draft-list { display: grid; gap: 10px; }
+.food-draft-row { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 130px; gap: 0 12px; padding: 12px; border: 1px solid #e6ece4; border-radius: 14px; background: #fff; }
+.food-row-heading { display: flex; align-items: center; justify-content: space-between; grid-column: 1 / -1; margin-bottom: 9px; color: #506650; font-size: 11px; }
+.food-draft-row .form-field { margin-bottom: 10px; }
+.food-draft-row .form-field:nth-of-type(1) { grid-column: 1 / -1; }
+.food-draft-row .form-field:nth-of-type(2) { grid-column: 1 / -1; }
+.food-draft-row .form-field:last-of-type { grid-column: 1 / -1; }
+.food-line-estimate { grid-column: 1 / -1; color: #608364; font-size: 10px; }
+.custom-nutrition-grid { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 9px; }
+.custom-nutrition-grid .form-field { margin-bottom: 10px; }
+.add-food-line { justify-self: start; min-height: 36px; padding: 0 12px; font-size: 10px; }
+.nutrition-preview { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px 12px; margin: 15px 0; padding: 13px; border-radius: 12px; background: #f3f7f1; }
+.nutrition-preview strong { color: #536a55; font-size: 11px; }
+.nutrition-preview > span { color: #315e42; font-size: 14px; font-weight: 800; }
+.nutrition-preview small { grid-column: 1 / -1; color: #829084; font-size: 9px; }
+.inline-link-button { display: flex; margin: 12px auto 0; padding: 5px; border: 0; background: transparent; color: #52795a; font-size: 10px; font-weight: 700; }
+.photo-input { max-width: 100%; padding: 8px; border: 1px dashed #cbd8c8; border-radius: 10px; background: #f8faf7; color: #68796b; font-size: 10px; }
+.recipe-photo-preview { width: 100%; max-height: 230px; margin: 0 0 13px; border-radius: 13px; object-fit: cover; }
+.recipe-result-card { grid-template-columns: 130px minmax(0,1fr); }
+.recipe-result-image { width: 100%; min-height: 145px; }
+.match-copy { display: flex; align-items: flex-start; gap: 5px; color: #4f7855 !important; }
+.match-copy svg { flex: 0 0 auto; margin-top: 1px; }
+.saved-recipe-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.saved-recipe-card { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 9px; border: 1px solid #e5ebe3; border-radius: 14px; background: #fff; }
+.saved-recipe-main { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; }
+.saved-recipe-main img, .saved-recipe-placeholder { width: 55px; height: 52px; flex: 0 0 auto; border-radius: 9px; object-fit: cover; }
+.saved-recipe-placeholder { display: grid; place-items: center; background: #eef4eb; color: #52795a; }
+.saved-recipe-main > span:last-child { display: grid; gap: 5px; min-width: 0; }
+.saved-recipe-main strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.saved-recipe-main small { color: #879287; font-size: 9px; line-height: 1.35; }
+.empty-saved-recipes, .empty-measurements { padding: 18px; border: 1px dashed #dce5da; border-radius: 13px; color: #869187; font-size: 11px; line-height: 1.6; text-align: center; }
+.logged-recipe { align-items: center; flex-wrap: nowrap; padding: 7px 0; border-bottom: 1px solid #f0f2ee; }
+.logged-food-icon { display: grid; place-items: center; width: 33px; height: 33px; flex: 0 0 auto; border-radius: 9px; background: #eef4eb; color: #57815d; }
+.logged-food-copy { display: grid; gap: 3px; min-width: 0; flex: 1; }
+.logged-food-copy > span { overflow: hidden; color: #536756; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.logged-food-copy small { overflow: hidden; color: #94a095; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.logged-recipe > strong { flex: 0 0 auto; color: #718074; font-size: 9px; }
+.progress-setup-card, .progress-result-card { padding: 22px; border: 1px solid #e5ebe3; border-radius: 20px; background: #fff; }
+.setup-intro { margin-bottom: 20px; }
+.setup-intro h2 { margin: 6px 0; font-size: 20px; }
+.setup-intro p { max-width: 600px; margin: 0; color: #78867b; font-size: 12px; line-height: 1.7; }
+.profile-input-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 14px; }
+.profile-input-form .form-field { min-width: 0; }
+.profile-input-form .select-wrap select { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.calorie-estimate-box { display: grid; grid-template-columns: 25px minmax(0,1fr) auto; align-items: center; gap: 4px 9px; margin: 0 0 12px; padding: 12px; border-radius: 12px; background: #f1f6ef; color: #52795a; }
+.calorie-estimate-box svg { grid-row: span 2; }
+.calorie-estimate-box > span { font-size: 10px; font-weight: 700; }
+.calorie-estimate-box > strong { color: #315e42; font-size: 13px; }
+.calorie-estimate-box > small { grid-column: 2 / -1; color: #849287; font-size: 9px; }
+.health-note { margin: 12px 0; color: #879287; font-size: 10px; line-height: 1.65; }
+.profile-input-form .find-recipe-button { margin-top: 5px; }
+.progress-result-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.progress-result-top h2 { margin: 5px 0; color: #315e42; font-size: 24px; }
+.progress-result-top p { margin: 0; color: #809083; font-size: 11px; }
+.progress-stat-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-top: 17px; }
+.progress-stat-grid article { display: grid; gap: 6px; padding: 13px; border-radius: 13px; background: #f5f8f3; }
+.progress-stat-grid article > span { color: #879287; font-size: 9px; text-transform: uppercase; letter-spacing: .7px; }
+.progress-stat-grid strong { color: #304b36; font-size: 20px; }
+.progress-stat-grid small { color: #879287; font-size: 9px; line-height: 1.5; }
+.progress-history-card { display: grid; gap: 0; padding: 0 16px; border: 1px solid #e5ebe3; border-radius: 16px; background: #fff; }
+.progress-history-row { display: grid; grid-template-columns: minmax(90px,1fr) 85px minmax(0,2fr); align-items: center; gap: 10px; padding: 13px 0; border-bottom: 1px solid #edf0eb; }
+.progress-history-row:last-child { border-bottom: 0; }
+.progress-history-row > span { color: #7d897f; font-size: 10px; }
+.progress-history-row > strong { color: #375b3e; font-size: 13px; }
+.progress-history-row > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.progress-history-row small { padding: 4px 6px; border-radius: 6px; background: #f2f6f0; color: #78867b; font-size: 8px; }
+.reminder-card { display: flex; align-items: flex-start; gap: 13px; margin-top: 16px; padding: 16px; border: 1px solid #e4ebe2; border-radius: 16px; background: #fff; }
+.reminder-icon { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 auto; border-radius: 12px; background: #eaf2e8; color: #4b7954; }
+.reminder-copy { min-width: 0; flex: 1; }
+.reminder-copy > strong { color: #354b39; font-size: 12px; }
+.reminder-copy p { margin: 5px 0 9px; color: #7f8a81; font-size: 10px; line-height: 1.55; }
+.reminder-frequency { display: flex; align-items: center; gap: 8px; color: #6f7e71; font-size: 10px; }
+.reminder-frequency select { padding: 6px 8px; border: 1px solid #e2e9e0; border-radius: 8px; background: #fbfcfa; color: #405943; font-size: 10px; }
+.notification-message { display: block; margin-top: 8px; color: #56805c; font-size: 9px; line-height: 1.5; }
+.form-section-label { margin: 4px 0 10px; color: #4d6250; font-size: 11px; font-weight: 700; }
+.measurement-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 12px; }
+.saved-routine-list { display: grid; gap: 9px; }
+.saved-routine { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid #e6ece4; border-radius: 12px; }
+.saved-routine > div { display: grid; gap: 5px; min-width: 0; }
+.saved-routine strong { font-size: 12px; }
+.saved-routine span { color: #879287; font-size: 10px; }
+.picker-exercise-list { max-height: 52vh; overflow-y: auto; }
+.routine-modal { max-width: 560px; }
+.profile-modal { max-width: 680px; }
+.food-modal { max-width: 680px; }
+.recipe-detail-placeholder { display: grid; place-items: center; color: #628267; }
+
+@media (max-width: 760px) {
+  .topbar { z-index: 60; }
+  .modal-backdrop { z-index: 110; align-items: flex-end; padding: 0; }
+  .modal-panel:not(.recipe-detail-modal) { width: 100%; max-height: min(92dvh, 900px); padding: 0 0 env(safe-area-inset-bottom); border-radius: 23px 23px 0 0; }
+  .modal-panel:not(.recipe-detail-modal) > .modal-heading { padding: 17px 16px 13px; }
+  .modal-heading h2 { font-size: 20px; }
+  .modal-body { padding: 12px 16px 18px; }
+  .modal-close { width: 40px; height: 40px; }
+  .recipe-detail-backdrop { z-index: 130; }
+  .recipe-detail-modal { max-height: 94dvh; border-radius: 22px 22px 0 0; }
+  .recipe-detail-modal .detail-close { width: 42px; height: 42px; }
+  .food-draft-row { grid-template-columns: minmax(0,1fr); }
+  .food-draft-row .form-field:nth-of-type(1), .food-draft-row .form-field:nth-of-type(2), .food-draft-row .form-field:last-of-type { grid-column: 1; }
+  .profile-input-grid { grid-template-columns: 1fr; }
+  .progress-setup-card, .progress-result-card { padding: 16px; }
+  .progress-result-top { align-items: flex-start; flex-direction: column; }
+  .progress-result-top h2 { font-size: 21px; }
+  .progress-stat-grid { grid-template-columns: 1fr; }
+  .progress-stat-grid article { grid-template-columns: 1fr auto; }
+  .progress-stat-grid article > span, .progress-stat-grid article > small { grid-column: 1 / -1; }
+  .progress-history-row { grid-template-columns: minmax(90px,1fr) auto; }
+  .progress-history-row > div { grid-column: 1 / -1; }
+  .reminder-card { flex-wrap: wrap; padding: 13px; }
+  .reminder-copy { flex-basis: calc(100% - 55px); }
+  .reminder-card > .primary-button, .reminder-card > .secondary-button { width: 100%; }
+  .saved-recipe-grid { grid-template-columns: 1fr; }
+  .week-navigation .week-range { padding: 7px; }
+  .week-navigation { gap: 4px; }
+  .week-navigation .icon-button { width: 30px; height: 30px; }
+  .routine-actions { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .picker-exercise { gap: 8px; padding: 7px; }
+  .picker-exercise > .exercise-photo { width: 65px; height: 62px; min-height: 62px; }
+  .picker-action-label { font-size: 9px; }
+  .picker-exercise-detail { padding-left: 80px; }
+  .exercise-card .exercise-photo { width: 100%; height: 170px; }
+  .logged-recipe { display: grid; grid-template-columns: 33px minmax(0,1fr) auto; gap: 7px; }
+  .logged-food-icon { grid-row: span 2; }
+  .logged-food-copy { grid-column: 2 / 4; }
+  .logged-recipe > strong { grid-column: 2; }
+  .logged-recipe > .remove-action { grid-column: 3; grid-row: 2; }
+  .section-heading > .primary-button { min-height: 37px; padding: 0 10px; font-size: 9px; }
+}
+@media (max-width: 370px) {
+  .modal-body { padding-right: 12px; padding-left: 12px; }
+  .modal-panel:not(.recipe-detail-modal) > .modal-heading { padding-right: 12px; padding-left: 12px; }
+  .creator-filter-grid, .custom-nutrition-grid, .measurement-grid { grid-template-columns: 1fr; }
+  .recipe-result-card { grid-template-columns: 82px minmax(0,1fr); }
+  .picker-action-label { max-width: 52px; text-align: right; }
+}
