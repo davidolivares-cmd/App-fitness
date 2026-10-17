@@ -606,11 +606,18 @@ function ProgressOverview({ records, completedWorkoutDates }: { records: Progres
   </section>
 }
 
-function ExerciseImage({ index, name }: { index: number; name: string }) {
-  const col = index % 5, row = Math.floor(index / 5)
-  return <div className="exercise-art exercise-photo" role="img" aria-label={`Ilustración de ${name}`} style={{ backgroundImage: `url("${import.meta.env.BASE_URL}exercises/exercise-sprite-v2.webp")`, backgroundPosition: `${col / 4 * 100}% ${row / 14 * 100}%` }} />
+const individualExerciseIllustrations: Record<number, string> = {
+  8: 'hip-thrust-barbell.svg',
 }
 
+function ExerciseImage({ index, name }: { index: number; name: string }) {
+  const col = index % 5, row = Math.floor(index / 5)
+  const individualImage = individualExerciseIllustrations[index]
+  const imageUrl = individualImage
+    ? `${import.meta.env.BASE_URL}exercises/${individualImage}`
+    : `${import.meta.env.BASE_URL}exercises/exercise-sprite-v2.webp`
+  return <div className="exercise-art exercise-photo" role="img" aria-label={`Ilustración de ${name}`} style={{ backgroundImage: `url("${imageUrl}")`, backgroundPosition: individualImage ? 'center' : `${col / 4 * 100}% ${row / 14 * 100}%`, backgroundSize: individualImage ? 'contain' : '500% 1500%', backgroundRepeat: 'no-repeat' }} />
+}
 function RecipeResults({ recipes, message, onOpen, onAdd, showMatches, busy = false }: { recipes: Recipe[]; message: string; onOpen: (recipe: Recipe) => void; onAdd: (recipe: Recipe) => void; showMatches: boolean; busy?: boolean }) {
   return <>{message && <p className={recipes.length ? 'creator-message success-message' : 'creator-message'} role="status">{message}</p>}{busy && <p className="ai-recipe-loading" role="status"><Sparkles size={16} /> Preparando propuestas personalizadas…</p>}{recipes.length > 0 && <div className="recipe-results"><div className="results-heading"><strong>{showMatches ? 'Recetas sugeridas por IA' : 'Tu receta sorpresa'}</strong><span>{recipes.length} resultado{recipes.length === 1 ? '' : 's'}</span></div>{recipes.map((recipe) => { const macros = recipeMacros(recipe); return <article className="recipe-result-card" key={recipe.id}><button className="recipe-result-image" onClick={() => onOpen(recipe)} aria-label={`Ver receta ${recipe.name}`}><img src={recipe.image} alt={recipe.imageIsIllustrative ? `Fotografía orientativa de ${recipe.name}` : `Fotografía de ${recipe.name}`} /><span>{recipe.time} min</span>{recipe.imageIsIllustrative && <small>Foto orientativa</small>}</button><div className="recipe-result-info"><div className="recipe-type-label">{recipe.type} · {macros.calories} kcal{recipe.isAiGenerated && ' · IA'}</div><h3>{recipe.name}</h3><p>{recipe.description}</p>{showMatches && <p className="match-copy"><Check size={13} /> {recipe.matchCount} ingredientes coinciden{recipe.missing?.length ? ` · faltan ${recipe.missing.slice(0, 3).join(', ')}` : ''}</p>}<div className="recipe-macros"><span><strong>{macros.protein} g</strong> proteína</span><span><strong>{macros.carbs} g</strong> hidratos</span><span><strong>{macros.fat} g</strong> grasas</span></div><div className="recipe-result-actions"><button className="secondary-button" onClick={() => onOpen(recipe)}>Ver receta</button><button className="primary-button small-primary" onClick={() => onAdd(recipe)}><Plus size={15} /> Añadir a mi día</button></div></div></article>})}</div>}</>
 }
