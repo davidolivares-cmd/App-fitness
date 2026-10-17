@@ -429,7 +429,7 @@ function App() {
       const { macros } = recipeFromCatalog(recipe)
       return { ...recipe, calories: Math.round(macros.calories), protein: macros.protein }
     }).filter((recipe) => recipe.calories <= limit)
-    if (!candidates.length) { setRecipeMessage(mode === 'pantry' ? 'No hay una coincidencia suficientemente cercana en el catálogo para esos ingredientes. Prueba con 2 o más ingredientes básicos, como pollo, arroz, tomate, huevo o garbanzos.' : 'No encontramos recetas con esos filtros. Prueba a aumentar el límite de calorías o cambia el tipo de plato.'); return }
+    if (!candidates.length) { setRecipeMessage('No encontramos recetas con esos filtros. Prueba a aumentar el límite de calorías o cambia el tipo de plato.'); return }
     if (mode === 'random') {
       if (proteinPriority) candidates.sort((a, b) => b.protein / b.calories - a.protein / a.calories)
       const pool = proteinPriority ? candidates.slice(0, Math.min(3, candidates.length)) : candidates
