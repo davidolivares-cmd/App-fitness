@@ -166,7 +166,7 @@ function App() {
     if (!session) { setData(blankData); setDataReady(false); setPersistenceAvailable(false); return }
     let cancelled = false
     setDataReady(false); setSaveStatus('loading'); setDataError('')
-    supabase.from('forma_user_data').select('payload').eq('user_id', session.user.id).maybeSingle().then(async ({ data: row, error: loadError }) => {
+    Promise.resolve(supabase.from('forma_user_data').select('payload').eq('user_id', session.user.id).maybeSingle()).then(async ({ data: row, error: loadError }) => {
       if (cancelled) return
       if (loadError) {
         const missingTable = loadError.code === '42P01' || loadError.code === 'PGRST205' || loadError.message.toLowerCase().includes('forma_user_data')
