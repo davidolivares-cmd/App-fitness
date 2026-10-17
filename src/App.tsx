@@ -606,9 +606,17 @@ function ProgressOverview({ records, completedWorkoutDates }: { records: Progres
   </section>
 }
 
+const individualExerciseIllustrations: Record<number, string> = {
+  8: 'hip-thrust-barbell.svg',
+}
+
 function ExerciseImage({ index, name }: { index: number; name: string }) {
   const col = index % 5, row = Math.floor(index / 5)
-  return <div className="exercise-art exercise-photo" role="img" aria-label={`Ilustración de ${name}`} style={{ backgroundImage: `url("${import.meta.env.BASE_URL}exercises/exercise-sprite-v2.webp")`, backgroundPosition: `${col / 4 * 100}% ${row / 14 * 100}%` }} />
+  const individualImage = individualExerciseIllustrations[index]
+  const imageUrl = individualImage
+    ? `${import.meta.env.BASE_URL}exercises/${individualImage}`
+    : `${import.meta.env.BASE_URL}exercises/exercise-sprite-v2.webp`
+  return <div className="exercise-art exercise-photo" role="img" aria-label={`Ilustración de ${name}`} style={{ backgroundImage: `url("${imageUrl}")`, backgroundPosition: individualImage ? 'center' : `${col / 4 * 100}% ${row / 14 * 100}%`, backgroundSize: individualImage ? 'contain' : '500% 1500%', backgroundRepeat: 'no-repeat' }} />
 }
 
 function RecipeResults({ recipes, message, onOpen, onAdd, showMatches, busy = false }: { recipes: Recipe[]; message: string; onOpen: (recipe: Recipe) => void; onAdd: (recipe: Recipe) => void; showMatches: boolean; busy?: boolean }) {
