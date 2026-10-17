@@ -716,3 +716,64 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
   .recipe-result-card { grid-template-columns: 82px minmax(0,1fr); }
   .picker-action-label { max-width: 52px; text-align: right; }
 }
+
+/* Searchable nutrition inputs and visual progress overview. */
+.food-search-suggestions { z-index: 4; display: grid; grid-column: 1 / -1; overflow: hidden; margin: -7px 0 10px; border: 1px solid #e3eae0; border-radius: 11px; background: #fff; box-shadow: 0 8px 22px rgba(29,55,35,.1); }
+.food-search-suggestions button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; padding: 8px 11px; border: 0; border-bottom: 1px solid #eff2ed; background: #fff; color: #354a3a; text-align: left; }
+.food-search-suggestions button:last-child { border-bottom: 0; }
+.food-search-suggestions button:hover, .food-search-suggestions button[aria-selected='true'] { background: #f4f7f2; }
+.food-search-suggestions button span { font-size: 11px; }
+.food-search-suggestions button small { flex-shrink: 0; color: #78877a; font-size: 9px; }
+.food-ai-actions { display: flex; flex-wrap: wrap; align-items: center; grid-column: 1 / -1; gap: 8px; margin: -2px 0 10px; }
+.food-ai-actions .secondary-button { min-height: 34px; padding: 0 10px; font-size: 9px; }
+.food-ai-actions .inline-link-button { margin: 0; }
+.food-search-hint, .food-ai-privacy { color: #89958b; font-size: 9px; line-height: 1.5; }
+.food-search-hint { grid-column: 1 / -1; margin: -5px 0 8px; }
+.food-ai-privacy { margin: 0 0 12px; }
+.food-estimate-note { grid-column: 1 / -1; color: #879287; font-size: 9px; line-height: 1.5; }
+.recipe-result-image small { position: absolute; top: 7px; left: 7px; padding: 5px 7px; border-radius: 6px; background: rgba(255,255,255,.94); color: #516851; font-size: 8px; font-weight: 700; }
+.ai-recipe-loading { display: flex; align-items: center; gap: 8px; margin: 14px 0; color: #557b5c; font-size: 11px; }
+.progress-overview { margin: 25px 0 4px; }
+.progress-overview-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); gap: 13px; }
+.progress-visual-card { min-width: 0; padding: 17px; border: 1px solid #e5ebe3; border-radius: 17px; background: #fff; }
+.progress-visual-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+.progress-visual-heading h3 { margin: 5px 0 0; color: #304b36; font-size: 16px; }
+.progress-metric-select select { max-width: 130px; min-height: 34px; padding: 0 9px; border: 1px solid #e2e9e0; border-radius: 9px; background: #fbfcfa; color: #405943; font-size: 10px; }
+.progress-chart-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+.progress-line-chart { display: block; width: 100%; min-width: 500px; height: auto; }
+.chart-grid-line { stroke: #edf1eb; stroke-width: 1; }
+.chart-axis-label, .chart-date-label { fill: #859187; font-family: inherit; font-size: 11px; }
+.chart-series-line { fill: none; stroke: #4e8057; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+.chart-series-point { fill: #fff; stroke: #4e8057; stroke-width: 3; }
+.chart-summary { margin: 7px 0 0; color: #7f8c81; font-size: 10px; line-height: 1.5; }
+.progress-chart-empty { display: grid; place-items: center; gap: 8px; min-height: 180px; color: #64866a; text-align: center; }
+.progress-chart-empty span { color: #526854; font-size: 12px; font-weight: 700; }
+.progress-chart-empty small { color: #89958b; font-size: 10px; }
+.calendar-heading { align-items: flex-start; }
+.calendar-month-controls { display: flex; align-items: center; gap: 6px; }
+.calendar-month-controls > span { min-width: 100px; color: #506650; font-size: 10px; font-weight: 700; text-align: center; text-transform: capitalize; }
+.calendar-month-controls .icon-button { width: 29px; height: 29px; }
+.calendar-weekdays, .calendar-month-days { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 4px; }
+.calendar-weekdays { margin-bottom: 5px; }
+.calendar-weekdays span { color: #89958b; font-size: 9px; font-weight: 700; text-align: center; }
+.calendar-month-days { grid-auto-rows: 34px; }
+.calendar-day-empty { min-width: 0; }
+.calendar-month-day { position: relative; display: grid; place-items: center; min-width: 0; border: 1px solid transparent; border-radius: 9px; color: #657368; font-size: 10px; }
+.calendar-month-day.today { border-color: #8db18d; color: #315e42; font-weight: 800; }
+.calendar-month-day.trained { background: #eaf3e8; color: #315e42; font-weight: 800; }
+.calendar-month-day.trained i { position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; background: #4e8057; }
+.calendar-legend { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; color: #7f8c81; font-size: 9px; }
+.calendar-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.calendar-legend i { width: 8px; height: 8px; border-radius: 3px; }
+.legend-completed { background: #dcebd8; }
+.legend-today { border: 1px solid #8db18d; }
+.calendar-month-summary { display: flex; align-items: baseline; gap: 7px; margin-top: 12px; padding-top: 11px; border-top: 1px solid #edf1eb; color: #7f8c81; font-size: 10px; }
+.calendar-month-summary strong { color: #315e42; font-size: 20px; }
+.calendar-help-text { margin: 7px 0 0; color: #89958b; font-size: 9px; line-height: 1.5; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); }
+@media (max-width: 900px) { .progress-overview-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .progress-visual-card { padding: 13px; }
+  .progress-line-chart { min-width: 480px; }
+  .calendar-month-days { grid-auto-rows: 37px; }
+}

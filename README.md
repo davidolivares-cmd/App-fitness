@@ -34,11 +34,22 @@ Food values are estimates per 100 g and can be overridden for foods missing from
 
 The app asks for notification permission only after a user presses the activation button. The browser reminder checks whether a progress entry is due when Forma is open. Delivery while the app is closed needs a push service and server-side scheduler and is not configured here.
 
-Pantry suggestions use a local recipe catalog and require multiple ingredient matches. No AI provider is connected. An AI integration should run behind a Supabase Edge Function with the provider secret stored server-side; a secret must not be embedded in this public GitHub Pages app.
+Random recipe suggestions continue to use the local recipe catalog. “Cocina con lo que tienes” and nutrition estimates for foods outside the local catalog use the `forma-ai` Supabase Edge Function. The function requires an OpenAI API key stored as a Supabase secret; never put this secret in GitHub Pages or browser environment variables.
+
+Deploy the function to the Supabase project used by the app and configure its secret:
+
+```sh
+supabase secrets set OPENAI_API_KEY=your-key
+supabase functions deploy forma-ai
+```
+
+The function uses `gpt-4o-mini` unless an `OPENAI_MODEL` Supabase secret overrides it. Until the function is deployed with a valid key, the rest of the app works and the AI controls show an actionable setup error. AI food values and recipe nutrition are estimates; confirm them against food labels and review generated ingredients and cooking instructions.
+
+The progress page includes a selectable measurement chart and a monthly calendar. Mark a planned workout as completed in the weekly training view to record it in the calendar.
 
 ## Exercise library
 
-The 75 exercise names, instructions, and illustrations in `src/data/exercises.ts` and `public/exercises/exercise-sprite.webp` come from the user-provided visual exercise glossary. The exercise pictures are illustrations, not photographs.
+The 75 exercise names, instructions, and illustrations in `src/data/exercises.ts` and `public/exercises/exercise-sprite-v2.webp` come from the user-provided visual exercise glossary. The exercise pictures are illustrations, not photographs.
 
 ## Build and deploy
 
