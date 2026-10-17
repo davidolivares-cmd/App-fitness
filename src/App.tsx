@@ -211,14 +211,6 @@ function App() {
     return matchesFocus && matchesQuery
   }), [exerciseFilter, exerciseSearch])
 
-  const titles: Record<Section, string> = {
-    inicio: 'Tu espacio personal',
-    entreno: 'Planifica tu entrenamiento',
-    comida: 'Tu alimentación',
-    progreso: 'Tu evolución',
-    perfil: 'Tu perfil'
-  }
-
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError('')
