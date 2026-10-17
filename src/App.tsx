@@ -26,7 +26,7 @@ type Routine = { id: string; name: string; focus: Focus; exercises: Exercise[] }
 type ProgressRecord = { id: string; date: string; weightKg: number; waist?: number; chest?: number; hips?: number; arm?: number; thigh?: number }
 type UserProfile = { age: number; sex: 'mujer' | 'hombre' | 'manual'; heightCm: number; weightKg: number; activity: ActivityLevel; goal: Goal; targetCalories: number; reminderFrequency: ReminderFrequency; remindersEnabled: boolean; reminderLastSent?: string }
 type UserData = { profile: UserProfile | null; workouts: Record<string, WorkoutDay>; routines: Routine[]; meals: MealLog[]; savedRecipes: SavedRecipe[]; progress: ProgressRecord[] }
-type DialogName = 'exercise' | 'food' | 'random' | 'pantry' | 'custom-recipe' | 'routines' | 'save-routine' | 'measurement'
+type DialogName = 'exercise' | 'food' | 'random' | 'pantry' | 'custom-recipe' | 'routines' | 'save-routine' | 'measurement' | 'setup'
 type DraftFood = { id: string; foodId: string; grams: string; customName: string; calories: string; protein: string; carbs: string; fat: string }
 type ProfileDraft = { age: string; sex: UserProfile['sex']; heightCm: string; weightKg: string; activity: ActivityLevel; goal: Goal; manualCalories: string; reminderFrequency: ReminderFrequency }
 
@@ -153,7 +153,7 @@ function App() {
 
   useEffect(() => {
     let mounted = true
-    supabase.auth.getSession().then(({ data: authData, error: sessionError }) => {
+    Promise.resolve(supabase.auth.getSession()).then(({ data: authData, error: sessionError }) => {
       if (!mounted) return
       if (sessionError) setError('No se ha podido comprobar la sesión. Recarga la página e inténtalo de nuevo.')
       setSession(authData.session); setLoading(false)
