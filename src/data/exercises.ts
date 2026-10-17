@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 export type ExerciseCategory = 'Tren inferior' | 'Tren superior' | 'Cardio'
 
 export type Exercise = {

@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 -- Forma private account data and recipe photographs.
 -- Apply with: supabase db push (or run this file in the Supabase SQL editor).
 

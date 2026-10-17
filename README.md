@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 # Forma
 
 Forma is a private, mobile-first fitness and nutrition app built with React, TypeScript, Vite, and Supabase.

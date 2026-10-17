@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   const targetUrl = self.registration.scope

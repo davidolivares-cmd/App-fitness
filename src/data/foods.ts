@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 export type Food = { id: string; name: string; calories: number; protein: number; carbs: number; fat: number }
 
 // Valores aproximados por 100 g. Las etiquetas del producto y el método de cocción tienen prioridad.
