@@ -400,7 +400,8 @@ function App() {
     const enteredLimit = Number(recipeCalorieLimit)
     const limit = Number.isFinite(enteredLimit) && enteredLimit >= 100 && enteredLimit <= 2000 ? enteredLimit : 2000
     if (mode === 'pantry') {
-      const supplied = ingredientText.split(/[,;\n]+/).map((item) => item.trim().slice(0, 80)).filter(Boolean).slice(0, 20)
+      const parsedIngredients = ingredientText.split(/[,;\n]+/).map((item) => item.trim().slice(0, 80)).filter(Boolean)
+      const supplied = [...new Map(parsedIngredients.map((item) => [normalizeIngredient(item), item])).values()].slice(0, 20)
       if (supplied.length < 2) { setRecipeMessage('Escribe al menos dos ingredientes para que la IA pueda proponerte recetas relacionadas.'); return }
       setAiRecipeBusy(true)
       try {
