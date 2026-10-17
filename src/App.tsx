@@ -149,7 +149,7 @@ function App() {
   const filteredExercises = useMemo(() => exerciseCatalog.filter((exercise) => exercise.category === exerciseFilter && `${exercise.name} ${exercise.muscle} ${exercise.equipment}`.toLocaleLowerCase('es').includes(exerciseSearch.trim().toLocaleLowerCase('es'))), [exerciseFilter, exerciseSearch])
   const customRecipeMacros = totalsFor(recipeDraft.map(snapshotForDraft).filter((item): item is FoodSnapshot => item !== null))
   const mealDraftMacros = totalsFor(foodDraft.map(snapshotForDraft).filter((item): item is FoodSnapshot => item !== null))
-  const profileBMI = data.profile ? bmiFor(data.profile.weightKg, data.profile.heightCm) : null
+  const profileBMI = data.profile ? bmiFor(data.progress[data.progress.length - 1]?.weightKg ?? data.profile.weightKg, data.profile.heightCm) : null
 
   useEffect(() => {
     let mounted = true
@@ -222,7 +222,13 @@ function App() {
     const profile = data.profile
     if (!profile?.remindersEnabled || !profileBMI || !data.progress.length || profile.reminderLastSent === todayKey()) return
     const last = new Date(`${data.progress[data.progress.length - 1].date}T12:00:00`)
-    const due = new Date(last); due.setDate(due.getDate() + (profile.reminderFrequency === 'semanal' ? 7 : profile.reminderFrequency === 'quincenal' ? 14 : 30))
+    const due = new Date(last)
+    if (profile.reminderFrequency === 'mensual') {
+      const dayOfMonth = due.getDate()
+      due.setDate(1); due.setMonth(due.getMonth() + 1)
+      due.setDate(Math.min(dayOfMonth, new Date(due.getFullYear(), due.getMonth() + 1, 0).getDate()))
+    }
+    else due.setDate(due.getDate() + (profile.reminderFrequency === 'semanal' ? 7 : 14))
     if (due > new Date()) return
     const showReminder = async () => {
       try {
@@ -336,7 +342,9 @@ function App() {
     }).filter((recipe) => recipe.calories <= limit && (mode === 'random' || (recipe.matchCount >= Math.min(2, ingredientText.split(/[,;\n]+/).map((item) => item.trim()).filter(Boolean).length) && recipe.matchCount > 0)))
     if (!candidates.length) { setRecipeMessage(mode === 'pantry' ? 'No hay una coincidencia suficientemente cercana en el catálogo para esos ingredientes. Prueba con 2 o más ingredientes básicos, como pollo, arroz, tomate, huevo o garbanzos.' : 'No encontramos recetas con esos filtros. Prueba a aumentar el límite de calorías o cambia el tipo de plato.'); return }
     if (mode === 'random') {
-      const pick = candidates[Math.floor(Math.random() * candidates.length)]
+      if (proteinPriority) candidates.sort((a, b) => b.protein / b.calories - a.protein / a.calories)
+      const pool = proteinPriority ? candidates.slice(0, Math.min(3, candidates.length)) : candidates
+      const pick = pool[Math.floor(Math.random() * pool.length)]
       setRecipeResults([pick]); setRecipeMessage('Receta del catálogo seleccionada al azar. Los valores nutricionales son aproximados.')
     } else {
       candidates.sort((a, b) => b.matchCount - a.matchCount || (proteinPriority ? b.protein / b.calories - a.protein / a.calories : 0))
