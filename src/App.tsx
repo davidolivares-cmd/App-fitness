@@ -52,6 +52,7 @@ const blankProfileDraft: ProfileDraft = { age: '', sex: 'mujer', heightCm: '', w
 
 const localDateKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 const todayKey = () => localDateKey(new Date())
+const authRedirectUrl = () => new URL(import.meta.env.BASE_URL, window.location.origin).toString()
 const displayDate = (key: string, options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }) => new Intl.DateTimeFormat('es-ES', options).format(new Date(`${key}T12:00:00`))
 const round = (value: number) => Math.round(value * 10) / 10
 const asNumber = (value: string) => Number(value.replace(',', '.'))
@@ -135,6 +136,8 @@ function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
+  const [isRecovering, setIsRecovering] = useState(false)
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
   const [authMessage, setAuthMessage] = useState('')
   const [error, setError] = useState('')
   const [signingIn, setSigningIn] = useState(false)
@@ -249,7 +252,12 @@ function App() {
       if (sessionError) setError('No se ha podido comprobar la sesión. Recarga la página e inténtalo de nuevo.')
       setSession(authData.session); setLoading(false)
     }).catch(() => { if (mounted) { setError('No se ha podido conectar con la autenticación. Comprueba tu conexión.'); setLoading(false) } })
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => { if (mounted) setSession(nextSession) })
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (!mounted) return
+      if (event === 'PASSWORD_RECOVERY') { setIsPasswordRecovery(true); setEmail(nextSession?.user.email ?? '') }
+      if (event === 'SIGNED_OUT') setIsPasswordRecovery(false)
+      setSession(nextSession)
+    })
     return () => { mounted = false; listener.subscription.unsubscribe() }
   }, [])
 
@@ -395,24 +403,50 @@ function App() {
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); setError(''); setAuthMessage(''); setSigningIn(true)
     try {
-      const emailRedirectTo = new URL(import.meta.env.BASE_URL, window.location.origin).toString()
       const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email: email.trim(), password,
-        options: { emailRedirectTo }
+        options: { emailRedirectTo: authRedirectUrl() }
       })
       if (signupError) throw signupError
+      if (signupData.user && signupData.user.identities?.length === 0) {
+        setError('Ya existe una cuenta con ese correo. Usa «¿Has olvidado la contraseña?» para establecer una nueva.')
+        return
+      }
       if (signupData.session) setAuthMessage('Cuenta creada. Preparando tu espacio…')
       else setAuthMessage('Cuenta creada. Revisa tu correo y confirma la dirección para entrar en Forma.')
     } catch (registerError) {
-      const message = registerError instanceof Error ? registerError.message.toLowerCase() : ''
-      setError(message.includes('already registered') || message.includes('already been registered')
+      const authError = registerError as { message?: unknown; code?: unknown }
+      const message = String(authError?.message ?? registerError).toLowerCase()
+      const code = String(authError?.code ?? '').toLowerCase()
+      setError(message.includes('already registered') || message.includes('already been registered') || code === 'user_already_exists'
         ? 'Ya existe una cuenta con ese correo. Inicia sesión o utiliza otro correo.'
+        : code === 'signup_disabled' || message.includes('signups not allowed')
+          ? 'El registro está desactivado en Supabase. Activa los registros de correo en Authentication → Sign In / Providers.'
         : message.includes('password')
           ? 'La contraseña no cumple los requisitos de seguridad de Supabase.'
           : 'No se ha podido crear la cuenta. Comprueba el correo y vuelve a intentarlo.')
     } finally { setSigningIn(false) }
   }
-  const toggleAuthMode = () => { setIsRegistering((current) => !current); setError(''); setAuthMessage('') }
+  const handlePasswordRecoveryRequest = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); setError(''); setAuthMessage(''); setSigningIn(true)
+    try {
+      const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: authRedirectUrl() })
+      if (recoveryError) throw recoveryError
+      setAuthMessage('Si existe una cuenta con ese correo, recibirás un enlace para establecer una contraseña nueva.')
+    } catch { setError('No se pudo enviar el enlace. Comprueba el correo y vuelve a intentarlo.') }
+    finally { setSigningIn(false) }
+  }
+  const handlePasswordUpdate = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); setError(''); setAuthMessage(''); setSigningIn(true)
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password })
+      if (updateError) throw updateError
+      setIsPasswordRecovery(false); setPassword(''); setAuthMessage('Contraseña actualizada. Ya puedes entrar en Forma.')
+    } catch { setError('No se pudo actualizar la contraseña. Comprueba que tenga al menos 8 caracteres y vuelve a intentarlo.') }
+    finally { setSigningIn(false) }
+  }
+  const toggleAuthMode = () => { setIsRegistering((current) => isRecovering ? false : !current); setIsRecovering(false); setError(''); setAuthMessage('') }
+  const openPasswordRecovery = () => { setIsRegistering(false); setIsRecovering(true); setError(''); setAuthMessage('') }
   const handleLogout = async () => { setError(''); setSigningOut(true); const { error: logoutError } = await supabase.auth.signOut(); if (logoutError) setError('No se ha podido cerrar la sesión. Inténtalo de nuevo.'); setSigningOut(false) }
   const addExercise = (exercise: Exercise) => {
     const current = data.workouts[selectedDate] ?? { focus: exercise.category, exercises: [] }
@@ -630,7 +664,7 @@ function App() {
   }
 
   if (loading) return <main className="auth-screen"><section className="auth-card auth-loading"><div className="brand-mark"><Activity size={24} /></div><h1>forma</h1><p>Preparando tu espacio...</p></section></main>
-  if (!session) return <main className="auth-screen"><section className="auth-card"><div className="auth-brand"><span className="brand-mark"><Activity size={25} /></span><div><strong>forma</strong><small>FITNESS & WELLNESS</small></div></div><p className="eyebrow">TU SALUD, A TU RITMO</p><h1>{isRegistering ? 'Crear cuenta' : 'Bienvenido'}</h1><p className="auth-description">{isRegistering ? 'Regístrate gratis para guardar tu perfil y tu progreso en Forma.' : 'Inicia sesión para entrar en tu espacio personal.'}</p><form className="auth-form" onSubmit={isRegistering ? handleRegister : handleLogin}><label htmlFor="email">Correo electrónico</label><div className="auth-input-wrap"><Mail size={18} /><input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} required /></div><label htmlFor="password">Contraseña</label><div className="auth-input-wrap"><LockKeyhole size={18} /><input id="password" type="password" autoComplete={isRegistering ? 'new-password' : 'current-password'} minLength={isRegistering ? 8 : undefined} placeholder={isRegistering ? 'Mínimo 8 caracteres' : 'Tu contraseña'} value={password} onChange={(event) => setPassword(event.target.value)} required /></div>{error && <p className="auth-error" role="alert">{error}</p>}{authMessage && <p className="auth-success" role="status">{authMessage}</p>}<button className="auth-submit" type="submit" disabled={signingIn}>{signingIn ? (isRegistering ? 'Creando cuenta...' : 'Iniciando sesión...') : (isRegistering ? 'Crear cuenta' : 'Iniciar sesión')} <ArrowRight size={17} /></button></form><button className="auth-mode-toggle" type="button" onClick={toggleAuthMode}>{isRegistering ? '¿Ya tienes cuenta? Inicia sesión' : '¿Aún no tienes cuenta? Regístrate'}</button><p className="auth-footer"><ShieldCheck size={15} /> Tu perfil y tus datos se guardan de forma privada en tu cuenta de Supabase.</p></section></main>
+  if (!session || isPasswordRecovery) return <main className="auth-screen"><section className="auth-card"><div className="auth-brand"><span className="brand-mark"><Activity size={25} /></span><div><strong>forma</strong><small>FITNESS & WELLNESS</small></div></div><p className="eyebrow">TU SALUD, A TU RITMO</p><h1>{isPasswordRecovery ? 'Nueva contraseña' : isRecovering ? 'Recuperar contraseña' : isRegistering ? 'Crear cuenta' : 'Bienvenido'}</h1><p className="auth-description">{isPasswordRecovery ? 'Elige una contraseña nueva para acceder a tu perfil.' : isRecovering ? 'Te enviaremos un enlace para establecer una contraseña nueva.' : isRegistering ? 'Regístrate gratis para guardar tu perfil y tu progreso en Forma.' : 'Inicia sesión para entrar en tu espacio personal.'}</p><form className="auth-form" onSubmit={isPasswordRecovery ? handlePasswordUpdate : isRecovering ? handlePasswordRecoveryRequest : isRegistering ? handleRegister : handleLogin}><label htmlFor="email">Correo electrónico</label><div className="auth-input-wrap"><Mail size={18} /><input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} required readOnly={isPasswordRecovery} /></div>{(!isRecovering || isPasswordRecovery) && <><label htmlFor="password">{isPasswordRecovery ? 'Nueva contraseña' : 'Contraseña'}</label><div className="auth-input-wrap"><LockKeyhole size={18} /><input id="password" type="password" autoComplete={isRegistering || isPasswordRecovery ? 'new-password' : 'current-password'} minLength={isRegistering || isPasswordRecovery ? 8 : undefined} placeholder={isRegistering || isPasswordRecovery ? 'Mínimo 8 caracteres' : 'Tu contraseña'} value={password} onChange={(event) => setPassword(event.target.value)} required /></div></>}{error && <p className="auth-error" role="alert">{error}</p>}{authMessage && <p className="auth-success" role="status">{authMessage}</p>}<button className="auth-submit" type="submit" disabled={signingIn}>{signingIn ? (isPasswordRecovery ? 'Actualizando...' : isRecovering ? 'Enviando enlace...' : isRegistering ? 'Creando cuenta...' : 'Iniciando sesión...') : (isPasswordRecovery ? 'Guardar contraseña' : isRecovering ? 'Enviar enlace' : isRegistering ? 'Crear cuenta' : 'Iniciar sesión')} <ArrowRight size={17} /></button></form>{!isPasswordRecovery && !isRecovering && !isRegistering && <button className="auth-mode-toggle" type="button" onClick={openPasswordRecovery}>¿Has olvidado la contraseña?</button>}{!isPasswordRecovery && <button className="auth-mode-toggle" type="button" onClick={toggleAuthMode}>{isRegistering || isRecovering ? '¿Ya tienes cuenta? Inicia sesión' : '¿Aún no tienes cuenta? Regístrate'}</button>}<p className="auth-footer"><ShieldCheck size={15} /> Tu perfil y tus datos se guardan de forma privada en tu cuenta de Supabase.</p></section></main>
 
   const weekRange = week.length ? `${displayDate(week[0].date)} — ${displayDate(week[6].date)}` : ''
   const selectedDayData = week.find((day) => day.date === selectedDate)
