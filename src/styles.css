@@ -508,7 +508,7 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
   .profile-main p { font-size: 10px; }
   .settings-card { padding: 16px; }
   .settings-field { font-size: 11px; }
-  .mobile-nav { position: fixed; inset: auto 0 0; z-index: 50; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 0; padding: 7px 4px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid #e5ebe3; background: rgba(255,255,255,.96); backdrop-filter: blur(16px); box-shadow: 0 -6px 24px rgba(34,52,36,.04); }
+  .mobile-nav { position: fixed; inset: auto 0 0; z-index: 50; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 0; padding: 7px 4px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid #e5ebe3; background: rgba(255,255,255,.96); backdrop-filter: blur(16px); box-shadow: 0 -6px 24px rgba(34,52,36,.04); }
   .mobile-item { display: flex; align-items: center; flex-direction: column; justify-content: center; gap: 4px; min-width: 0; min-height: 48px; padding: 4px 0; border: 0; border-radius: 10px; background: transparent; color: #879287; font-size: 9px; }
   .mobile-item.active { color: #315e42; font-weight: 700; }
   .mobile-item.active svg { stroke-width: 2.5; }
@@ -878,6 +878,44 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 .meal-plan-copy small { color: #859185; font-size: 9px; }
 .meal-plan-done { min-height: 32px; padding: 0 10px; font-size: 9px; white-space: nowrap; }
 .meal-plan-empty { margin: 0; padding: 13px; border: 1px dashed #dce6d9; border-radius: 10px; color: #829084; font-size: 10px; line-height: 1.6; }.meal-plan-picker { display: grid; gap: 12px; }
+
+.social-card { display: grid; gap: 15px; margin-top: 16px; padding: 20px; border: 1px solid #e5ebe3; border-radius: 18px; background: #fff; }
+.social-card-heading { display: flex; align-items: center; gap: 12px; }
+.social-card-heading h2, .social-section-title h2 { font-size: 16px; }
+.social-card-heading p { margin: 4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.social-request-form { display: flex; gap: 9px; }
+.social-request-form .text-input { flex: 1; min-width: 0; }
+.social-section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.social-section-title .eyebrow { margin: 0 0 4px; }
+.social-section-title > span { color: var(--muted); font-size: 10px; }
+.social-person, .social-share-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #edf0eb; }
+.social-person > div:first-child, .social-share-copy { min-width: 0; display: grid; gap: 4px; }
+.social-person strong, .social-share-copy strong { overflow-wrap: anywhere; font-size: 12px; }
+.social-person small, .social-share-copy small { color: var(--muted); font-size: 10px; }
+.social-actions { display: flex; gap: 7px; }
+.social-actions .secondary-button, .social-actions .primary-button { min-height: 34px; padding: 0 10px; font-size: 10px; }
+.social-status { flex-shrink: 0; color: #4f8058; font-size: 10px; font-weight: 700; }
+.social-share-form { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 12px; }
+.social-share-form .form-field { margin: 0; }
+.social-share-form select { width: 100%; }
+.social-share-list { display: grid; }
+.social-share-icon { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border-radius: 11px; background: #edf4ec; color: var(--green); }
+.social-share-copy { flex: 1; }
+.social-share-item .primary-button { min-height: 35px; padding: 0 11px; font-size: 10px; }
+.social-empty { margin: 0; padding: 13px; border: 1px dashed #dce6d9; border-radius: 11px; color: #829084; font-size: 11px; line-height: 1.55; }
+.social-error, .social-success { margin: 14px 0; }
+.social-success { padding: 11px 13px; border: 1px solid #dcebd9; border-radius: 10px; background: #f0f7ee; color: #3e754b; font-size: 11px; }
+.social-privacy-note { margin-top: 16px; }
+
+@media (max-width: 760px) {
+  .social-card { gap: 12px; padding: 14px; border-radius: 15px; }
+  .social-request-form { align-items: stretch; flex-direction: column; }
+  .social-share-form { grid-template-columns: 1fr; }
+  .social-person, .social-share-item { align-items: flex-start; flex-wrap: wrap; }
+  .social-person > div:first-child { flex: 1 1 100%; }
+  .social-share-item .primary-button { margin-left: 48px; }
+  .social-actions { margin-left: auto; }
+}
 .meal-plan-picker-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .meal-plan-picker-heading > span { color: #89948a; font-size: 10px; }
 .meal-plan-category-pills { flex-wrap: wrap; }
