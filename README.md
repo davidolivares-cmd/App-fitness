@@ -1,61 +1,71 @@
 # Forma
 
-Forma is a private, mobile-first fitness and nutrition app built with React, TypeScript, Vite, and Supabase.
+Forma es una aplicación privada y adaptable de entrenamiento y nutrición, creada con React, TypeScript, Vite y Supabase.
 
 ## Run locally
 
-Requirements: Node.js 22 and npm.
+Requisitos: Node.js 22 o superior y npm.
 
 ```sh
 npm install
 npm run dev
 ```
 
-Configure the public Supabase project values in an ignored `.env.local` file:
+Configura los valores públicos del proyecto Supabase en un archivo `.env.local` ignorado por Git:
 
 ```text
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Never put a Supabase service-role key or an AI provider secret in browser code.
+No incluyas una clave `service_role` de Supabase ni secretos del proveedor de IA en el código del navegador.
 
-## Private account data
+## Datos privados de la cuenta
 
-Run the migration in `supabase/migrations/202610170001_forma_private_data.sql` against the Supabase project used by this app. It creates the `forma_user_data` table with owner-only row-level security and a private `recipe-photos` bucket with per-user storage policies.
+Ejecuta la migración `supabase/migrations/202610170001_forma_private_data.sql` en el proyecto Supabase de la aplicación. Crea `forma_user_data` con políticas RLS por propietario y el bucket privado `recipe-photos` con políticas de almacenamiento por usuario.
 
-You can apply it with the Supabase CLI (`supabase db push`) or paste the migration into the Supabase SQL editor. Until this migration is applied, sign-in still works, but new workout, meal, recipe, and progress data cannot sync to the account. The app shows that setup state instead of claiming the data was saved.
+Puedes aplicarla con Supabase CLI (`supabase db push`) o desde el editor SQL de Supabase. Sin la migración, el inicio de sesión funciona, pero los datos nuevos no se sincronizan con la cuenta; la app muestra ese estado en lugar de afirmar que se guardaron.
 
-## Nutrition and progress
+## Nutrición y progreso
 
-Food values are estimates per 100 g and can be overridden for foods missing from the catalog. The calorie target uses the Mifflin–St Jeor estimate, an activity multiplier, and a modest goal adjustment; users can enter a target manually. BMI is shown as a screening indicator for people aged 20 or older, not as a diagnosis. The first profile submission stores a baseline progress record for that day; later entries can include optional waist, chest, hip, arm, and thigh measurements.
+Los valores de alimentos son estimaciones por 100 g y se pueden introducir manualmente cuando falten en el catálogo. El objetivo calórico usa la estimación Mifflin–St Jeor, un factor de actividad y un ajuste moderado según el objetivo; también se puede introducir manualmente. El IMC se muestra como indicador orientativo, no como diagnóstico. El primer perfil crea un registro inicial de peso; los siguientes pueden incluir cintura, pecho, cadera, brazo y muslo.
 
-## Reminders and recipe suggestions
+## Recordatorios e ideas de recetas
 
-The app asks for notification permission only after a user presses the activation button. The browser reminder checks whether a progress entry is due when Forma is open. Delivery while the app is closed needs a push service and server-side scheduler and is not configured here.
+La app solicita permiso de notificaciones solo después de que la persona pulse el botón de activación. El recordatorio comprueba si toca registrar el progreso al abrir Forma. Los avisos con la app cerrada requieren un servicio push y un planificador de servidor, que no están configurados.
 
-Random recipe suggestions continue to use the local recipe catalog. “Cocina con lo que tienes” and nutrition estimates for foods outside the local catalog use the `forma-ai` Supabase Edge Function. The function requires an OpenAI API key stored as a Supabase secret; never put this secret in GitHub Pages or browser environment variables.
+Las recetas aleatorias y la búsqueda por ingredientes usan el catálogo local. La estimación nutricional de alimentos fuera del catálogo utiliza la función Edge `forma-ai` de Supabase, que llama a Google Gemini. La función requiere el secreto `GEMINI_API_KEY` en Supabase; no lo pongas en GitHub Pages ni en variables del navegador. También puede configurarse `GEMINI_MODEL`; por defecto usa `gemini-flash-latest`.
 
-Deploy the function to the Supabase project used by the app and configure its secret:
+Despliega la función en el proyecto Supabase de Forma y configura el secreto:
 
 ```sh
-supabase secrets set OPENAI_API_KEY=your-key
+supabase secrets set GEMINI_API_KEY=your-key
 supabase functions deploy forma-ai
 ```
 
-The function uses `gpt-4o-mini` unless an `OPENAI_MODEL` Supabase secret overrides it. Until the function is deployed with a valid key, the rest of the app works and the AI controls show an actionable setup error. AI food values and recipe nutrition are estimates; confirm them against food labels and review generated ingredients and cooking instructions.
+Until the function is deployed with a valid Gemini key, the rest of the app works and AI controls show an error. AI food values and recipes are estimates; check food labels, ingredients, quantities, allergens and preparation before relying on them.
 
-The progress page includes a selectable measurement chart and a monthly calendar. Mark a planned workout as completed in the weekly training view to record it in the calendar.
+La página de progreso incluye un gráfico seleccionable de medidas y un calendario mensual. Marca como realizado un entrenamiento desde el calendario semanal para registrarlo.
 
-## Exercise library
+## Aplicación instalable
 
-The 75 exercise names, instructions, and illustrations in `src/data/exercises.ts` and `public/exercises/exercise-sprite-v2.webp` come from the user-provided visual exercise glossary. The exercise pictures are illustrations, not photographs.
+La app incluye `public/manifest.webmanifest` y registra el service worker en producción con la ruta base de GitHub Pages. El worker gestiona los clics de notificación; no almacena en caché el contenido privado ni permite usar los datos sin conexión. Los avisos push con la app cerrada siguen requiriendo un servicio push y un planificador de servidor.
 
-## Build and deploy
+## Catálogo de ejercicios
+
+Los nombres, instrucciones e ilustraciones del catálogo de ejercicios están en `src/data/exercises.ts` y `public/exercises/exercise-sprite-v2.webp`. Las imágenes son ilustraciones, no fotografías.
+
+## Pruebas, compilación y publicación
 
 ```sh
 npm run build
 npm run preview
 ```
 
-GitHub Actions builds pull requests without deploying them. A push to `main` or a manual workflow run builds and deploys GitHub Pages. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` as repository Actions variables for the deployed app.
+Las pruebas de reglas nutricionales usan el ejecutor integrado de Node.js:
+
+```sh
+npm test
+```
+
+GitHub Actions compila las solicitudes de cambio sin publicarlas. Un push a `main` o la ejecución manual del flujo compila y publica GitHub Pages. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` como variables de Actions.

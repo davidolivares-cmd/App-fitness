@@ -1,4 +1,5 @@
 import { additionalRecipeCatalog } from './recipes-extra'
+import { calculateRecipeNutrition } from './recipe-nutrition'
 
 export type MealType = 'Desayuno' | 'Comida' | 'Cena' | 'Snack'
 export type RecipeCategory = 'Platos de cuchara' | 'Platos elaborados' | 'Platos fríos' | 'Para llevar a la oficina'
@@ -40,8 +41,8 @@ const img = (filename: string) => `${import.meta.env.BASE_URL}recipes/${filename
 const ingredient = (name: string, grams: number, foodId?: string, isMatchable = true): RecipeIngredient => ({ name, grams, foodId, isMatchable })
 const recipe = (entry: Recipe): Recipe => entry
 
-// Recetas adaptadas a una ración. Las del recetario V2 conservan los macros publicados por ración;
-// en las demás, calorías y macros son estimaciones calculadas con las cantidades de una ración.
+// Recetas adaptadas a una ración. Los valores nutricionales se recalculan desde
+// los gramos de cada ingrediente, con perfiles genéricos por 100 g.
 export const recipeCatalog: Recipe[] = [
   recipe({
     id: 'v2-hummus-remolacha', name: 'Hummus de remolacha con crudités', type: 'Snack', category: 'Platos fríos', time: 20,
@@ -192,3 +193,8 @@ export const recipeCatalog: Recipe[] = [
   }),
   ...additionalRecipeCatalog
 ]
+
+recipeCatalog.forEach((entry) => {
+  entry.nutrition = calculateRecipeNutrition(entry.ingredients)
+  entry.nutritionSource = 'estimacion'
+})
