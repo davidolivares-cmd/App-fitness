@@ -795,7 +795,27 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 .meal-plan-copy strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .meal-plan-copy small { color: #859185; font-size: 9px; }
 .meal-plan-done { min-height: 32px; padding: 0 10px; font-size: 9px; white-space: nowrap; }
-.meal-plan-empty { margin: 0; padding: 13px; border: 1px dashed #dce6d9; border-radius: 10px; color: #829084; font-size: 10px; line-height: 1.6; }
+.meal-plan-empty { margin: 0; padding: 13px; border: 1px dashed #dce6d9; border-radius: 10px; color: #829084; font-size: 10px; line-height: 1.6; }.meal-plan-picker { display: grid; gap: 12px; }
+.meal-plan-picker-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.meal-plan-picker-heading > span { color: #89948a; font-size: 10px; }
+.meal-plan-category-pills { flex-wrap: wrap; }
+.meal-plan-recipe-list { display: grid; gap: 9px; max-height: 48vh; overflow: auto; padding: 1px 3px 1px 1px; }
+.meal-plan-recipe-card { display: grid; grid-template-columns: 104px minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 9px; border: 1px solid #e5ebe3; border-radius: 13px; background: #fff; }
+.meal-plan-recipe-card > img, .meal-plan-recipe-card > .meal-plan-recipe-placeholder { width: 104px; height: 76px; border-radius: 9px; object-fit: cover; }
+.meal-plan-recipe-placeholder { display: grid; place-items: center; color: #6f9475; background: #eef4eb; }
+.meal-plan-recipe-info { display: grid; gap: 6px; min-width: 0; }
+.meal-plan-recipe-info strong { font-size: 12px; line-height: 1.4; }
+.meal-plan-recipe-info small { color: #879287; font-size: 9px; }
+.meal-plan-selected-recipe { display: grid; grid-template-columns: 86px minmax(0,1fr) auto; align-items: center; gap: 11px; padding: 9px; border: 1px solid #dfe9dc; border-radius: 12px; background: #f8faf7; }
+.meal-plan-selected-recipe > img, .meal-plan-selected-recipe > .meal-plan-recipe-placeholder { width: 86px; height: 66px; border-radius: 8px; object-fit: cover; }
+.meal-plan-selected-recipe > div { display: grid; gap: 4px; min-width: 0; }
+.meal-plan-selected-recipe small { color: #78917a; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.meal-plan-selected-recipe strong { font-size: 11px; line-height: 1.4; }
+.meal-plan-selected-recipe span { color: #859185; font-size: 9px; }
+.meal-plan-choose-button { width: 100%; display: grid; justify-items: start; gap: 5px; padding: 13px; border: 1px dashed #bfcfbd; border-radius: 12px; color: #3e7049; background: #f8fbf7; text-align: left; }
+.meal-plan-choose-button > span { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; }
+.meal-plan-choose-button > small, .meal-plan-help { color: #889488; font-size: 10px; }
+.meal-plan-help { margin: -5px 0 2px; line-height: 1.5; }
 .pantry-next-button { width: 100%; margin-top: 10px; }
 .recipe-filter-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
 .recipe-result-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #729078; background: #eef4eb; }
@@ -811,6 +831,13 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
   .meal-plan-done { grid-column: 3; grid-row: 1; }
 }
 @media (max-width: 560px) {
+  .meal-plan-recipe-card { grid-template-columns: 76px minmax(0,1fr); gap: 8px; }
+  .meal-plan-recipe-card > img, .meal-plan-recipe-card > .meal-plan-recipe-placeholder { width: 76px; height: 68px; }
+  .meal-plan-recipe-card > button { grid-column: 2; justify-self: start; }
+  .meal-plan-selected-recipe { grid-template-columns: 64px minmax(0,1fr); }
+  .meal-plan-selected-recipe > img, .meal-plan-selected-recipe > .meal-plan-recipe-placeholder { width: 64px; height: 58px; }
+  .meal-plan-selected-recipe > button { grid-column: 2; justify-self: start; }
+
   .recipe-filter-grid { grid-template-columns: 1fr; gap: 2px; }
   .meal-plan-item { grid-template-columns: 1fr auto; gap: 7px; }
   .meal-plan-type { grid-column: 1 / -1; }

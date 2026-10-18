@@ -1,3 +1,5 @@
+import { additionalRecipeCatalog } from './recipes-extra'
+
 export type MealType = 'Desayuno' | 'Comida' | 'Cena' | 'Snack'
 export type RecipeCategory = 'Platos de cuchara' | 'Platos elaborados' | 'Platos fríos' | 'Para llevar a la oficina'
 
@@ -187,5 +189,6 @@ export const recipeCatalog: Recipe[] = [
     ingredients: [ingredient('Albóndigas de pollo', 125), ingredient('Caldo de pollo', 60), ingredient('Harina', 4), ingredient('Aceite de oliva', 8, 'olive-oil', false)],
     steps: ['Dora las albóndigas en una sartén con aceite y resérvalas.', 'Tuesta la harina en la misma sartén y añade el caldo poco a poco mientras remueves.', 'Devuelve las albóndigas y cocina a fuego suave hasta que estén hechas y la salsa espese.'],
     nutrition: { calories: 340, protein: 20, carbs: 10, fat: 24 }, nutritionSource: 'estimacion', source: 'Recetario de cocina de pollo, p. 6'
-  })
+  }),
+  ...additionalRecipeCatalog
 ]

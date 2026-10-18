@@ -8,16 +8,19 @@ export type Exercise = {
   equipment: string
   detail: string
   imageIndex: number
+  image?: string
   sets: number
   reps: number
 }
 
 const lower: Array<[string, string, string]> = [
-  ['Sentadilla con barra', 'Cuádriceps y glúteos', 'Barra'], ['Sentadilla goblet', 'Piernas y glúteos', 'Mancuerna'], ['Sentadilla frontal', 'Cuádriceps y core', 'Barra'], ['Sentadilla hack', 'Cuádriceps', 'Máquina hack'], ['Prensa de piernas', 'Cuádriceps y glúteos', 'Prensa'], ['Peso muerto convencional', 'Cadena posterior', 'Barra'], ['Peso muerto rumano', 'Isquiotibiales y glúteos', 'Barra o mancuernas'], ['Peso muerto sumo', 'Glúteos y aductores', 'Barra'], ['Hip thrust con barra', 'Glúteos', 'Barra y banco'], ['Puente de glúteos', 'Glúteos', 'Peso corporal'], ['Zancada hacia delante', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Zancada hacia atrás', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Zancada caminando', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Sentadilla búlgara', 'Cuádriceps y glúteos', 'Banco y mancuernas'], ['Step-up al cajón', 'Piernas y glúteos', 'Cajón'], ['Extensión de piernas', 'Cuádriceps', 'Máquina'], ['Curl femoral sentado', 'Isquiotibiales', 'Máquina'], ['Curl femoral tumbado', 'Isquiotibiales', 'Máquina'], ['Abducción de cadera', 'Glúteo medio', 'Máquina'], ['Aducción de cadera', 'Aductores', 'Máquina'], ['Patada de glúteo en polea', 'Glúteos', 'Polea'], ['Elevación de gemelos de pie', 'Gemelos', 'Máquina o peso corporal'], ['Elevación de gemelos sentado', 'Gemelos', 'Máquina'], ['Buenos días con barra', 'Isquiotibiales y espalda', 'Barra'], ['Peso muerto a una pierna', 'Glúteos e isquiotibiales', 'Peso corporal o mancuerna']
+  ['Sentadilla con barra', 'Cuádriceps y glúteos', 'Barra'], ['Sentadilla goblet', 'Piernas y glúteos', 'Mancuerna'], ['Sentadilla frontal', 'Cuádriceps y core', 'Barra'], ['Sentadilla hack', 'Cuádriceps', 'Máquina hack'], ['Prensa de piernas', 'Cuádriceps y glúteos', 'Prensa'], ['Peso muerto convencional', 'Cadena posterior', 'Barra'], ['Peso muerto rumano', 'Isquiotibiales y glúteos', 'Barra o mancuernas'], ['Peso muerto sumo', 'Glúteos y aductores', 'Barra'], ['Hip thrust con barra', 'Glúteos', 'Barra y banco'], ['Puente de glúteos', 'Glúteos', 'Peso corporal'], ['Zancada hacia delante', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Zancada hacia atrás', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Zancada caminando', 'Piernas y glúteos', 'Peso corporal o mancuernas'], ['Sentadilla búlgara', 'Cuádriceps y glúteos', 'Banco y mancuernas'], ['Step-up al cajón', 'Piernas y glúteos', 'Cajón'], ['Extensión de piernas', 'Cuádriceps', 'Máquina'], ['Curl femoral sentado', 'Isquiotibiales', 'Máquina'], ['Curl femoral tumbado', 'Isquiotibiales', 'Máquina'], ['Abducción de cadera', 'Glúteo medio', 'Máquina'], ['Aducción de cadera', 'Aductores', 'Máquina'], ['Patada de glúteo en polea', 'Glúteos', 'Polea'], ['Elevación de gemelos de pie', 'Gemelos', 'Máquina o peso corporal'], ['Elevación de gemelos sentado', 'Gemelos', 'Máquina'], ['Buenos días con barra', 'Isquiotibiales y espalda', 'Barra'], ['Peso muerto a una pierna', 'Glúteos e isquiotibiales', 'Peso corporal o mancuerna'],
+  ['Sentadilla en multipower', 'Cuádriceps y glúteos', 'Máquina Smith'], ['Hip thrust en máquina', 'Glúteos', 'Máquina de glúteos'], ['Curl femoral de pie', 'Isquiotibiales', 'Máquina'], ['Elevación de gemelos sentado en máquina', 'Gemelos', 'Máquina']
 ]
 
 const upper: Array<[string, string, string]> = [
-  ['Press de banca con barra', 'Pecho y tríceps', 'Barra y banco'], ['Press inclinado con mancuernas', 'Pecho y tríceps', 'Mancuernas y banco'], ['Press declinado', 'Pecho y tríceps', 'Barra o máquina'], ['Aperturas con mancuernas', 'Pecho', 'Mancuernas y banco'], ['Cruce de poleas', 'Pecho', 'Poleas'], ['Flexiones', 'Pecho, hombros y tríceps', 'Peso corporal'], ['Press militar con barra', 'Hombros y tríceps', 'Barra'], ['Press de hombros sentado', 'Hombros y tríceps', 'Mancuernas o máquina'], ['Elevaciones laterales', 'Deltoides lateral', 'Mancuernas'], ['Elevaciones frontales', 'Deltoides anterior', 'Mancuernas'], ['Pájaros para deltoides posterior', 'Deltoides posterior', 'Mancuernas'], ['Face pull', 'Deltoides posterior y espalda', 'Polea'], ['Encogimientos con mancuernas', 'Trapecio', 'Mancuernas'], ['Jalón al pecho', 'Espalda y bíceps', 'Polea'], ['Dominadas', 'Espalda y bíceps', 'Barra de dominadas'], ['Remo con barra', 'Espalda y bíceps', 'Barra'], ['Remo con mancuerna a una mano', 'Espalda y bíceps', 'Mancuerna y banco'], ['Remo sentado en polea', 'Espalda y bíceps', 'Polea'], ['Pullover con mancuerna', 'Pecho y espalda', 'Mancuerna y banco'], ['Curl de bíceps con barra', 'Bíceps', 'Barra'], ['Curl martillo', 'Bíceps y antebrazo', 'Mancuernas'], ['Curl en banco inclinado', 'Bíceps', 'Mancuernas y banco'], ['Extensión de tríceps en polea', 'Tríceps', 'Polea'], ['Fondos en paralelas', 'Tríceps y pecho', 'Barras paralelas'], ['Press francés', 'Tríceps', 'Barra o mancuernas']
+  ['Press de banca con barra', 'Pecho y tríceps', 'Barra y banco'], ['Press inclinado con mancuernas', 'Pecho y tríceps', 'Mancuernas y banco'], ['Press declinado', 'Pecho y tríceps', 'Barra o máquina'], ['Aperturas con mancuernas', 'Pecho', 'Mancuernas y banco'], ['Cruce de poleas', 'Pecho', 'Poleas'], ['Flexiones', 'Pecho, hombros y tríceps', 'Peso corporal'], ['Press militar con barra', 'Hombros y tríceps', 'Barra'], ['Press de hombros sentado', 'Hombros y tríceps', 'Mancuernas o máquina'], ['Elevaciones laterales', 'Deltoides lateral', 'Mancuernas'], ['Elevaciones frontales', 'Deltoides anterior', 'Mancuernas'], ['Pájaros para deltoides posterior', 'Deltoides posterior', 'Mancuernas'], ['Face pull', 'Deltoides posterior y espalda', 'Polea'], ['Encogimientos con mancuernas', 'Trapecio', 'Mancuernas'], ['Jalón al pecho', 'Espalda y bíceps', 'Polea'], ['Dominadas', 'Espalda y bíceps', 'Barra de dominadas'], ['Remo con barra', 'Espalda y bíceps', 'Barra'], ['Remo con mancuerna a una mano', 'Espalda y bíceps', 'Mancuerna y banco'], ['Remo sentado en polea', 'Espalda y bíceps', 'Polea'], ['Pullover con mancuerna', 'Pecho y espalda', 'Mancuerna y banco'], ['Curl de bíceps con barra', 'Bíceps', 'Barra'], ['Curl martillo', 'Bíceps y antebrazo', 'Mancuernas'], ['Curl en banco inclinado', 'Bíceps', 'Mancuernas'], ['Extensión de tríceps en polea', 'Tríceps', 'Polea'], ['Fondos en paralelas', 'Tríceps y pecho', 'Barras paralelas'], ['Press francés', 'Tríceps', 'Barra o mancuernas'],
+  ['Press de pecho en máquina', 'Pecho y tríceps', 'Máquina de press'], ['Aperturas en contractor', 'Pecho', 'Máquina pec deck'], ['Press de hombros en máquina', 'Hombros y tríceps', 'Máquina de press'], ['Remo con pecho apoyado en máquina', 'Espalda y bíceps', 'Máquina de remo'], ['Jalón al pecho en máquina', 'Espalda y bíceps', 'Polea alta']
 ]
 
 const cardio: Array<[string, string, string]> = [
@@ -38,7 +41,11 @@ const lowerDetails = [
   'Lleva la pierna hacia atrás sin arquear la espalda. Regresa despacio evitando que el cable tire de ella.',
   ...repeat(2, 'Apoya la parte delantera de los pies. Eleva los talones sin rebotar y baja hasta un estiramiento cómodo.'),
   'Mantén la espalda neutra. Lleva la cadera atrás y vuelve extendiéndola sin tirar de la zona lumbar.',
-  'Apóyate sobre una pierna, inclina el tronco desde la cadera y vuelve manteniendo el equilibrio.'
+  'Apóyate sobre una pierna, inclina el tronco desde la cadera y vuelve manteniendo el equilibrio.',
+  'Colócate bajo la barra guiada, apoya los pies algo adelantados y baja hasta un rango cómodo. Sube empujando el suelo con control.',
+  'Ajusta el respaldo y coloca los pies en la plataforma. Eleva la cadera contrayendo los glúteos y regresa sin perder el apoyo.',
+  'Alinea la cadera con el eje de giro y el rodillo detrás del tobillo. Flexiona una pierna sin arquear la espalda y vuelve despacio.',
+  'Apoya la parte delantera de los pies y coloca el rodillo sobre los muslos. Eleva los talones y baja lentamente.'
 ]
 const upperDetails = [
   ...repeat(3, 'Estabiliza los pies y los omóplatos. Baja la carga hacia el pecho y empuja con control, sin rebotar.'),
@@ -52,7 +59,12 @@ const upperDetails = [
   ...repeat(3, 'Mantén la espalda neutra. Lleva los codos hacia atrás y la carga hacia el torso; extiende lentamente.'),
   'Túmbate estable y lleva los brazos atrás con los codos suaves; vuelve sobre el pecho sin arquear la espalda.',
   ...repeat(3, 'Mantén los codos cerca del cuerpo y los hombros relajados. Flexiona sin balancearte y baja lentamente.'),
-  ...repeat(3, 'Mantén los codos estables. Extiende con control y evita bloquear las articulaciones con brusquedad.')
+  ...repeat(3, 'Mantén los codos estables. Extiende con control y evita bloquear las articulaciones con brusquedad.'),
+  'Ajusta el asiento para que las asas queden a la altura del pecho. Empuja al frente sin bloquear los codos y vuelve con control.',
+  'Siéntate con la espalda apoyada y los brazos a la altura de los hombros. Cierra los brazos en arco, sin juntar los hombros hacia las orejas.',
+  'Ajusta el asiento para que las asas queden a la altura de los hombros. Empuja hacia arriba y baja hasta un rango cómodo.',
+  'Apoya el pecho en el cojín y tira de las asas hacia el torso. Junta suavemente las escápulas y extiende los brazos despacio.',
+  'Fija los muslos bajo el soporte y lleva la barra hacia la parte alta del pecho. Evita balancearte y controla el retorno.'
 ]
 const cardioDetails = [
   'Empieza gradualmente, mantén la mirada al frente y usa una zancada natural. Termina bajando el ritmo.',
@@ -80,17 +92,34 @@ const cardioDetails = [
   'Adopta una guardia estable, golpea con control y recoge cada golpe manteniendo las muñecas alineadas.'
 ]
 
-const createGroup = (items: Array<[string, string, string]>, category: Exercise['category'], startIndex: number, details: string[]): Exercise[] => items.map(([name, muscle, equipment], index) => ({
-  id: `${category === 'Tren inferior' ? 'inferior' : category === 'Tren superior' ? 'superior' : 'cardio'}-${String(index + 1).padStart(2, '0')}`,
+const exerciseImage = (filename: string) => `${import.meta.env.BASE_URL}exercises/${filename}`
+const exercisePhotos: Record<string, string> = {
+  'Sentadilla en multipower': exerciseImage('smith-squat.webp'),
+  'Hip thrust en máquina': exerciseImage('glute-drive.webp'),
+  'Curl femoral de pie': exerciseImage('standing-leg-curl.webp'),
+  'Elevación de gemelos sentado en máquina': exerciseImage('seated-calf-raise.webp'),
+  'Press de pecho en máquina': exerciseImage('machine-chest-press.webp'),
+  'Aperturas en contractor': exerciseImage('pec-deck.webp'),
+  'Press de hombros en máquina': exerciseImage('machine-shoulder-press.webp'),
+  'Remo con pecho apoyado en máquina': exerciseImage('chest-supported-row.webp'),
+  'Jalón al pecho en máquina': exerciseImage('lat-pulldown.webp')
+}
+
+const createGroup = (items: Array<[string, string, string]>, category: Exercise['category'], startIndex: number, details: string[]): Exercise[] => items.map(([name, muscle, equipment], index) => {
+  const prefix = category === 'Tren inferior' ? 'inferior' : category === 'Tren superior' ? 'superior' : 'cardio'
+  return {
+  id: `${prefix}-${String(index + 1).padStart(2, '0')}`,
   name,
   category,
   muscle,
   equipment,
   detail: details[index],
   imageIndex: startIndex + index,
+  image: exercisePhotos[name] ?? exerciseImage(`${prefix}-${String(index + 1).padStart(2, '0')}.webp`),
   sets: category === 'Cardio' ? 1 : 3,
   reps: category === 'Cardio' ? 20 : 12
-}))
+  }
+})
 
 export const exerciseCatalog: Exercise[] = [
   ...createGroup(lower, 'Tren inferior', 0, lowerDetails),
