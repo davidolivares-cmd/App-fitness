@@ -310,7 +310,7 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 .recipe-result-card { display: grid; grid-template-columns: 135px minmax(0,1fr); gap: 13px; padding: 10px; border: 1px solid #e6ece4; border-radius: 15px; }
 .recipe-result-image { position: relative; overflow: hidden; min-height: 150px; padding: 0; border: 0; border-radius: 11px; background: #eff3eb; }
 .recipe-result-image img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
-.recipe-result-image span { position: absolute; left: 7px; bottom: 7px; padding: 5px 7px; border-radius: 6px; background: rgba(255,255,255,.94); color: #516851; font-size: 9px; font-weight: 700; }
+.recipe-result-time { position: absolute; left: 7px; bottom: 7px; padding: 5px 7px; border-radius: 6px; background: rgba(255,255,255,.94); color: #516851; font-size: 9px; font-weight: 700; }
 .recipe-result-info { min-width: 0; padding: 2px 0; }
 .recipe-type-label { color: #67906b; font-size: 9px; font-weight: 700; }
 .recipe-result-info h3 { margin-top: 4px; font-size: 14px; }
@@ -776,4 +776,46 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
   .progress-visual-card { padding: 13px; }
   .progress-line-chart { min-width: 480px; }
   .calendar-month-days { grid-auto-rows: 37px; }
+}
+.meal-planner-section { margin: 26px 0 4px; padding: 19px; border: 1px solid #e5ebe3; border-radius: 19px; background: #fff; }
+.meal-planner-heading { align-items: flex-start; margin: 0 0 14px; }
+.meal-planner-heading .subtitle { max-width: 590px; margin-top: 6px; font-size: 11px; line-height: 1.55; }
+.meal-planner-heading .week-navigation { flex-shrink: 0; }
+.meal-plan-week-strip { gap: 6px; }
+.meal-plan-week-strip .week-day { padding: 9px 3px; }
+.meal-plan-day { margin-top: 15px; padding: 15px; border-radius: 14px; background: #f8faf7; }
+.meal-plan-day-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.meal-plan-day-heading > div { display: grid; gap: 5px; }
+.meal-plan-day-heading > div > strong { font-size: 14px; }
+.meal-plan-list { display: grid; gap: 8px; }
+.meal-plan-item { display: grid; grid-template-columns: 80px minmax(0,1fr) auto auto; align-items: center; gap: 10px; padding: 10px; border: 1px solid #e5ebe3; border-radius: 11px; background: #fff; }
+.meal-plan-item.completed { border-color: #c8ddc8; background: #f3f8f1; }
+.meal-plan-type { color: #537a59; font-size: 10px; font-weight: 700; }
+.meal-plan-copy { display: grid; gap: 4px; min-width: 0; }
+.meal-plan-copy strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.meal-plan-copy small { color: #859185; font-size: 9px; }
+.meal-plan-done { min-height: 32px; padding: 0 10px; font-size: 9px; white-space: nowrap; }
+.meal-plan-empty { margin: 0; padding: 13px; border: 1px dashed #dce6d9; border-radius: 10px; color: #829084; font-size: 10px; line-height: 1.6; }
+.pantry-next-button { width: 100%; margin-top: 10px; }
+.recipe-filter-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.recipe-result-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #729078; background: #eef4eb; }
+.recipe-source { margin: 12px 0 0; color: #8b968c; font-size: 9px; }
+
+@media (max-width: 760px) {
+  .meal-planner-heading { flex-direction: column; }
+  .meal-planner-heading .week-navigation { align-self: stretch; justify-content: space-between; }
+  .meal-plan-week-strip { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 76px; overflow-x: auto; padding-bottom: 5px; }
+  .meal-planner-section { padding: 14px; }
+  .meal-plan-item { grid-template-columns: 65px minmax(0,1fr) auto; }
+  .meal-plan-item > .remove-action { grid-column: 3; justify-self: end; }
+  .meal-plan-done { grid-column: 3; grid-row: 1; }
+}
+@media (max-width: 560px) {
+  .recipe-filter-grid { grid-template-columns: 1fr; gap: 2px; }
+  .meal-plan-item { grid-template-columns: 1fr auto; gap: 7px; }
+  .meal-plan-type { grid-column: 1 / -1; }
+  .meal-plan-copy { grid-column: 1; }
+  .meal-plan-done { grid-column: 2; grid-row: 2; }
+  .meal-plan-item > .remove-action { grid-column: 2; grid-row: 1; }
+  .meal-plan-day-heading { align-items: flex-start; }
 }
