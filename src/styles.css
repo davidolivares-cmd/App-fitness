@@ -366,6 +366,9 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 .auth-submit { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 49px; margin-top: 16px; border: 0; border-radius: 12px; background: #315e42; color: #fff; font-size: 14px; font-weight: 700; }
 .auth-submit:hover:not(:disabled) { background: #264c35; }
 .auth-error { margin: 10px 0; padding: 12px 14px; border: 1px solid #f0d1cd; border-radius: 10px; background: #fff5f3; color: #a33d32; font-size: 13px; line-height: 1.5; }
+.auth-success { margin: 10px 0; padding: 12px 14px; border: 1px solid #d8e8d7; border-radius: 10px; background: #f1f8ef; color: #315e42; font-size: 13px; line-height: 1.5; }
+.auth-mode-toggle { display: block; margin: 18px auto 0; padding: 6px; border: 0; background: transparent; color: #315e42; font: inherit; font-size: 13px; font-weight: 700; }
+.auth-mode-toggle:hover { color: #20352b; text-decoration: underline; }
 .auth-footer { display: flex; align-items: flex-start; gap: 7px; margin: 24px 0 0; padding-top: 18px; border-top: 1px solid #edf0eb; color: #879087; font-size: 11px; line-height: 1.6; }
 .auth-footer svg { flex-shrink: 0; margin-top: 1px; }
 

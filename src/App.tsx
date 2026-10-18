@@ -134,6 +134,8 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [authMessage, setAuthMessage] = useState('')
   const [error, setError] = useState('')
   const [signingIn, setSigningIn] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
@@ -390,6 +392,27 @@ function App() {
     catch { setError('No se ha podido iniciar sesión. Comprueba el correo y la contraseña.') }
     finally { setSigningIn(false) }
   }
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); setError(''); setAuthMessage(''); setSigningIn(true)
+    try {
+      const emailRedirectTo = new URL(import.meta.env.BASE_URL, window.location.origin).toString()
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+        email: email.trim(), password,
+        options: { emailRedirectTo }
+      })
+      if (signupError) throw signupError
+      if (signupData.session) setAuthMessage('Cuenta creada. Preparando tu espacio…')
+      else setAuthMessage('Cuenta creada. Revisa tu correo y confirma la dirección para entrar en Forma.')
+    } catch (registerError) {
+      const message = registerError instanceof Error ? registerError.message.toLowerCase() : ''
+      setError(message.includes('already registered') || message.includes('already been registered')
+        ? 'Ya existe una cuenta con ese correo. Inicia sesión o utiliza otro correo.'
+        : message.includes('password')
+          ? 'La contraseña no cumple los requisitos de seguridad de Supabase.'
+          : 'No se ha podido crear la cuenta. Comprueba el correo y vuelve a intentarlo.')
+    } finally { setSigningIn(false) }
+  }
+  const toggleAuthMode = () => { setIsRegistering((current) => !current); setError(''); setAuthMessage('') }
   const handleLogout = async () => { setError(''); setSigningOut(true); const { error: logoutError } = await supabase.auth.signOut(); if (logoutError) setError('No se ha podido cerrar la sesión. Inténtalo de nuevo.'); setSigningOut(false) }
   const addExercise = (exercise: Exercise) => {
     const current = data.workouts[selectedDate] ?? { focus: exercise.category, exercises: [] }
@@ -607,7 +630,7 @@ function App() {
   }
 
   if (loading) return <main className="auth-screen"><section className="auth-card auth-loading"><div className="brand-mark"><Activity size={24} /></div><h1>forma</h1><p>Preparando tu espacio...</p></section></main>
-  if (!session) return <main className="auth-screen"><section className="auth-card"><div className="auth-brand"><span className="brand-mark"><Activity size={25} /></span><div><strong>forma</strong><small>FITNESS & WELLNESS</small></div></div><p className="eyebrow">TU SALUD, A TU RITMO</p><h1>Bienvenido</h1><p className="auth-description">Inicia sesión para entrar en tu espacio personal.</p><form className="auth-form" onSubmit={handleLogin}><label htmlFor="email">Correo electrónico</label><div className="auth-input-wrap"><Mail size={18} /><input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} required /></div><label htmlFor="password">Contraseña</label><div className="auth-input-wrap"><LockKeyhole size={18} /><input id="password" type="password" autoComplete="current-password" placeholder="Tu contraseña" value={password} onChange={(event) => setPassword(event.target.value)} required /></div>{error && <p className="auth-error" role="alert">{error}</p>}<button className="auth-submit" type="submit" disabled={signingIn}>{signingIn ? 'Iniciando sesión...' : 'Iniciar sesión'} <ArrowRight size={17} /></button></form><p className="auth-footer"><ShieldCheck size={15} /> Forma es un espacio privado. Las cuentas las gestiona el administrador.</p></section></main>
+  if (!session) return <main className="auth-screen"><section className="auth-card"><div className="auth-brand"><span className="brand-mark"><Activity size={25} /></span><div><strong>forma</strong><small>FITNESS & WELLNESS</small></div></div><p className="eyebrow">TU SALUD, A TU RITMO</p><h1>{isRegistering ? 'Crear cuenta' : 'Bienvenido'}</h1><p className="auth-description">{isRegistering ? 'Regístrate gratis para guardar tu perfil y tu progreso en Forma.' : 'Inicia sesión para entrar en tu espacio personal.'}</p><form className="auth-form" onSubmit={isRegistering ? handleRegister : handleLogin}><label htmlFor="email">Correo electrónico</label><div className="auth-input-wrap"><Mail size={18} /><input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} required /></div><label htmlFor="password">Contraseña</label><div className="auth-input-wrap"><LockKeyhole size={18} /><input id="password" type="password" autoComplete={isRegistering ? 'new-password' : 'current-password'} minLength={isRegistering ? 8 : undefined} placeholder={isRegistering ? 'Mínimo 8 caracteres' : 'Tu contraseña'} value={password} onChange={(event) => setPassword(event.target.value)} required /></div>{error && <p className="auth-error" role="alert">{error}</p>}{authMessage && <p className="auth-success" role="status">{authMessage}</p>}<button className="auth-submit" type="submit" disabled={signingIn}>{signingIn ? (isRegistering ? 'Creando cuenta...' : 'Iniciando sesión...') : (isRegistering ? 'Crear cuenta' : 'Iniciar sesión')} <ArrowRight size={17} /></button></form><button className="auth-mode-toggle" type="button" onClick={toggleAuthMode}>{isRegistering ? '¿Ya tienes cuenta? Inicia sesión' : '¿Aún no tienes cuenta? Regístrate'}</button><p className="auth-footer"><ShieldCheck size={15} /> Tu perfil y tus datos se guardan de forma privada en tu cuenta de Supabase.</p></section></main>
 
   const weekRange = week.length ? `${displayDate(week[0].date)} — ${displayDate(week[6].date)}` : ''
   const selectedDayData = week.find((day) => day.date === selectedDate)
