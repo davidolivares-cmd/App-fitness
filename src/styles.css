@@ -799,7 +799,7 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 .pantry-next-button { width: 100%; margin-top: 10px; }
 .recipe-filter-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
 .recipe-result-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #729078; background: #eef4eb; }
-.recipe-source { margin: 12px 0 0; color: #8b968c; font-size: 9px; }
+
 
 @media (max-width: 760px) {
   .meal-planner-heading { flex-direction: column; }
