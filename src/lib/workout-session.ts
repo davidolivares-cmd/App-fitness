@@ -22,3 +22,8 @@ export function elapsedWorkoutSeconds(session: WorkoutSessionLog, now = Date.now
   if (!Number.isFinite(start) || !Number.isFinite(end)) return 0
   return Math.max(0, Math.floor((end - start - Math.max(0, session.pausedDurationMs)) / 1000))
 }
+
+export function pauseWorkoutSession(session: WorkoutSessionLog, now = Date.now()): WorkoutSessionLog {
+  if (session.completedAt || session.abandonedAt || session.pausedAt) return session
+  return { ...session, pausedAt: new Date(now).toISOString() }
+}

@@ -605,6 +605,20 @@ h3 { margin: 0; font-size: 15px; line-height: 1.38; letter-spacing: -.2px; }
 @media (max-width: 560px) { .workout-set-row { grid-template-columns: 1fr repeat(2, minmax(68px, 1fr)) 38px; } .workout-set-row label:nth-of-type(3) { grid-column: 2 / 4; } .workout-session-timer { flex-wrap: wrap; } .workout-session-timer > strong { flex-basis: 100%; order: 3; font-size: 22px; } .workout-session-actions { align-items: stretch; flex-direction: column-reverse; } .workout-session-actions > * { justify-content: center; } }
 .servings-note { margin: -4px 0 10px !important; color: #879287 !important; font-size: 10px !important; }
 
+.meal-log-heading-actions { display: flex; align-items: center; gap: 10px; }
+.meal-log-heading-actions .text-input { width: 156px; min-height: 38px; }
+@media (max-width: 640px) {
+  .meal-log-heading { align-items: stretch; flex-direction: column; }
+  .meal-log-heading-actions { align-items: stretch; flex-direction: column; gap: 6px; }
+  .meal-log-heading-actions .text-input { width: 100%; }
+  .meal-log-heading-actions .text-button { justify-content: flex-end; min-height: 35px; }
+  .logged-recipe { grid-template-columns: 33px minmax(0, 1fr) auto auto; }
+  .logged-food-copy { grid-column: 2 / -1; }
+  .logged-recipe > strong { grid-column: 2; grid-row: 2; }
+  .logged-recipe > .tiny-text-button:not(.remove-action) { grid-column: 3; grid-row: 2; justify-self: end; }
+  .logged-recipe > .remove-action { grid-column: 4; grid-row: 2; justify-self: end; }
+}
+
 /* Account-backed data, exercise library, nutrition logging and progress setup */
 .save-pill.saving .status-dot { background: #d6a965; box-shadow: 0 0 0 3px #f7efdf; }
 .save-pill.error .status-dot, .save-pill.setup .status-dot { background: #b97a70; box-shadow: 0 0 0 3px #f8eae7; }

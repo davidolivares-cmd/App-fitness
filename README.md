@@ -50,6 +50,7 @@ La página de progreso incluye un gráfico seleccionable de medidas y un calenda
 ## Aplicación instalable
 
 La app incluye `public/manifest.webmanifest` y registra el service worker en producción con la ruta base de GitHub Pages. El worker gestiona los clics de notificación; no almacena en caché el contenido privado ni permite usar los datos sin conexión. Los avisos push con la app cerrada siguen requiriendo un servicio push y un planificador de servidor.
+
 ## Catálogo de ejercicios
 
 Los nombres, instrucciones e ilustraciones del catálogo de ejercicios están en `src/data/exercises.ts` y `public/exercises/exercise-sprite-v2.webp`. Las imágenes son ilustraciones, no fotografías.
