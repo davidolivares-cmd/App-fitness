@@ -3,7 +3,7 @@ import type { Session } from '@supabase/supabase-js'
 import {
   Activity, Apple, ArrowDown, ArrowLeft, ArrowRight, Bell, CalendarDays, Check, ChefHat, Play,
   ChevronDown, Dumbbell, Flame, LayoutDashboard, Leaf, LockKeyhole, LogOut,
-  Mail, Pencil, Plus, Search, Settings2, ShieldCheck, Sparkles, Target, TrendingUp, UserRound,
+  Mail, Pencil, Plus, Search, Settings2, ShieldCheck, Sparkles, Target, TrendingUp, UserRound, UsersRound,
   Trash2, X
 } from 'lucide-react'
 import { supabase } from './lib/supabase'
@@ -12,12 +12,13 @@ import { buildShoppingList } from './lib/shopping-list'
 import { createWorkoutSession, pauseWorkoutSession, type WorkoutSessionLog } from './lib/workout-session'
 import { ExerciseImage } from './components/ExerciseImage'
 import { WorkoutSessionModal } from './components/WorkoutSessionModal'
+import { SocialPanel, type ShareOption } from './components/SocialPanel'
 import { exerciseCatalog, type Exercise, type ExerciseCategory } from './data/exercises'
 import { foodCatalog, type Food } from './data/foods'
 import { recipeCatalog, recipeCategories, type MealType, type Recipe, type RecipeCategory, type RecipeIngredient } from './data/recipes'
 import './styles.css'
 
-type Section = 'inicio' | 'entreno' | 'comida' | 'progreso' | 'perfil'
+type Section = 'inicio' | 'entreno' | 'comida' | 'progreso' | 'social' | 'perfil'
 type Goal = 'perder' | 'mantener' | 'ganar'
 type ActivityLevel = 'sedentario' | 'ligero' | 'moderado' | 'alto'
 type ReminderFrequency = 'semanal' | 'quincenal' | 'mensual'
@@ -39,7 +40,7 @@ type ProfileDraft = { age: string; sex: UserProfile['sex']; heightCm: string; we
 
 const sections: Array<{ id: Section; label: string; icon: typeof LayoutDashboard }> = [
   { id: 'inicio', label: 'Inicio', icon: LayoutDashboard }, { id: 'entreno', label: 'Entreno', icon: Dumbbell },
-  { id: 'comida', label: 'Comida', icon: Apple }, { id: 'progreso', label: 'Progreso', icon: TrendingUp }, { id: 'perfil', label: 'Perfil', icon: UserRound }
+  { id: 'comida', label: 'Comida', icon: Apple }, { id: 'progreso', label: 'Progreso', icon: TrendingUp }, { id: 'social', label: 'Social', icon: UsersRound }, { id: 'perfil', label: 'Perfil', icon: UserRound }
 ]
 const mealTypes: MealType[] = ['Desayuno', 'Comida', 'Cena', 'Snack']
 const activityFactors: Record<ActivityLevel, number> = { sedentario: 1.2, ligero: 1.375, moderado: 1.55, alto: 1.725 }
@@ -222,6 +223,17 @@ function App() {
     const query = normalize(mealPlanRecipeSearch.trim())
     return allMealPlanRecipeOptions.filter((recipe) => (mealPlanRecipeCategory === 'Todas' || recipe.category === mealPlanRecipeCategory) && (!query || normalize(recipe.name).includes(query) || normalize(recipe.category).includes(query)))
   }, [allMealPlanRecipeOptions, mealPlanRecipeSearch, mealPlanRecipeCategory])
+  const socialShareOptions = useMemo<ShareOption[]>(() => {
+    const dates = new Set(mealPlanWeek.map((day) => day.date))
+    const entries = data.mealPlan.filter((entry) => dates.has(entry.date)).map((entry) => {
+      const saved = entry.recipeSnapshot ?? (entry.savedRecipeId ? data.savedRecipes.find((recipe) => recipe.id === entry.savedRecipeId) : undefined)
+      const safeSnapshot = saved ? (({ photoPath: _photoPath, photoUrl: _photoUrl, ...snapshot }) => snapshot)(saved) : undefined
+      return { id: entry.id, date: entry.date, type: entry.type, ...(entry.recipeId ? { recipeId: entry.recipeId } : {}), ...(safeSnapshot ? { recipeSnapshot: safeSnapshot } : {}) }
+    })
+    const menuOption: ShareOption[] = entries.length ? [{ id: 'current-week-menu', kind: 'menu', name: `Menú · ${displayDate(mealPlanWeek[0].date)} – ${displayDate(mealPlanWeek[6].date)}`, detail: `${entries.length} comidas`, payload: { entries } }] : []
+    const routineOptions: ShareOption[] = data.routines.map((routine) => ({ id: `routine:${routine.id}`, kind: 'routine', name: routine.name, detail: `${routine.focus} · ${routine.exercises.length} ejercicios`, payload: { focus: routine.focus, exercises: routine.exercises } }))
+    return [...menuOption, ...routineOptions]
+  }, [mealPlanWeek, data.mealPlan, data.savedRecipes, data.routines])
   const customRecipeMacros = totalsFor(recipeDraft.map(snapshotForDraft).filter((item): item is FoodSnapshot => item !== null))
   const mealDraftMacros = totalsFor(foodDraft.map(snapshotForDraft).filter((item): item is FoodSnapshot => item !== null))
   const sortedProgress = useMemo(() => [...data.progress].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id)), [data.progress])
@@ -322,6 +334,23 @@ function App() {
   }, [data.profile, data.progress, latestProgressRecord?.date, profileBMI])
 
   const updateData = (patch: Partial<UserData>) => setData((previous) => ({ ...previous, ...patch }))
+  const saveSharedItem = (item: { id: string; kind: 'menu' | 'routine'; title: string; payload: Record<string, unknown> }) => {
+    if (item.kind === 'menu') {
+      const entries = item.payload.entries
+      if (!Array.isArray(entries) || !entries.length) throw new Error('El menú compartido no contiene comidas.')
+      const copied = entries.filter((entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === 'object')).map((entry) => ({
+        id: crypto.randomUUID(), date: String(entry.date ?? todayKey()), type: String(entry.type ?? 'Comida') as MealType,
+        ...(typeof entry.recipeId === 'string' ? { recipeId: entry.recipeId } : {}),
+        ...(entry.recipeSnapshot && typeof entry.recipeSnapshot === 'object' ? { recipeSnapshot: entry.recipeSnapshot as SavedRecipe } : {})
+      }))
+      if (!copied.length) throw new Error('No se encontraron comidas válidas en el menú.')
+      updateData({ mealPlan: [...data.mealPlan, ...copied] })
+      return
+    }
+    const exercises = item.payload.exercises
+    if (!Array.isArray(exercises) || !exercises.length || typeof item.payload.focus !== 'string') throw new Error('La rutina compartida no contiene ejercicios válidos.')
+    updateData({ routines: [...data.routines, { id: crypto.randomUUID(), name: item.title, focus: item.payload.focus as Focus, exercises: exercises as Exercise[] }] })
+  }
   const toggleShoppingItem = (key: string) => setData((previous) => ({ ...previous, shoppingChecked: previous.shoppingChecked.includes(key) ? previous.shoppingChecked.filter((item) => item !== key) : [...previous.shoppingChecked, key] }))
   const setWorkout = (date: string, workout: WorkoutDay) => setData((previous) => ({ ...previous, workouts: { ...previous.workouts, [date]: workout } }))
   const toggleWorkoutCompleted = (date: string) => setData((previous) => {
@@ -633,11 +662,13 @@ function App() {
           <ProgressOverview records={data.progress} completedWorkoutDates={data.completedWorkoutDates} />
         </>}
 
+        {active === 'social' && <SocialPanel userId={session.user.id} options={socialShareOptions} onSaveShared={saveSharedItem} />}
+
         {active === 'perfil' && <>
           <div className="page-intro"><div><p className="eyebrow">TU ESPACIO PERSONAL</p><h1>Tu perfil</h1><p className="subtitle">Administra tu cuenta y tus objetivos personales.</p></div><div className="intro-icon sage"><UserRound size={24} /></div></div>
           <section className="profile-card"><div className="profile-avatar">{(session.user.email ?? 'F').slice(0, 1).toUpperCase()}</div><div className="profile-main"><h2>{session.user.email?.split('@')[0] ?? 'Usuario de Forma'}</h2><p>{session.user.email}</p><span className="account-status"><ShieldCheck size={14} /> Cuenta privada</span></div><button className="icon-button" onClick={() => { setError(''); void handleLogout() }} aria-label="Cerrar sesión" disabled={signingOut}><LogOut size={18} /></button></section>
           <section className="settings-card"><div className="settings-card-heading"><span className="settings-icon sage"><Target size={19} /></span><div><h2>Objetivos personales</h2><p>{data.profile ? `${data.profile.targetCalories.toLocaleString('es-ES')} kcal al día · ${goalLabels[data.profile.goal]}` : 'Completa tus datos para calcular el objetivo inicial.'}</p></div></div><button className="secondary-button" onClick={() => { setActive('progreso'); if (data.profile) openProfileEditor() }}>{data.profile ? 'Editar objetivos' : 'Completar perfil de progreso'} <ArrowRight size={15} /></button></section>
-          <section className="settings-card privacy-settings"><div className="settings-card-heading"><span className="settings-icon sage"><ShieldCheck size={19} /></span><div><h2>Privacidad y cuenta</h2><p>Los registros se guardan bajo tu cuenta privada.</p></div></div><p className="privacy-copy">Solo tú puedes leer tus entrenamientos, comidas, recetas y medidas. Las fotos de recetas se guardan en un espacio privado.</p><button className="secondary-button logout-full" onClick={() => void handleLogout()} disabled={signingOut}><LogOut size={16} /> {signingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</button></section>
+          <section className="settings-card privacy-settings"><div className="settings-card-heading"><span className="settings-icon sage"><ShieldCheck size={19} /></span><div><h2>Privacidad y cuenta</h2><p>Los registros se guardan bajo tu cuenta privada.</p></div></div><p className="privacy-copy">Tus registros de actividad, comidas y medidas siguen siendo privados. Desde Social puedes compartir copias concretas de menús o rutinas con tus conexiones.</p><button className="secondary-button logout-full" onClick={() => void handleLogout()} disabled={signingOut}><LogOut size={16} /> {signingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</button></section>
         </>}
       </div>
     </section>
