@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronDown, Dumbbell, Leaf, ListChecks, Sparkles, Target, Trophy, Utensils, Waves, Zap } from 'lucide-react'
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronDown, Dumbbell, Leaf, ListChecks, Sparkles, Target, Trophy, Utensils, Zap } from 'lucide-react'
 
 export type OnboardingAnswers = {
   goals: string[]
