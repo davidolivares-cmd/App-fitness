@@ -345,3 +345,199 @@ h2 { letter-spacing: -.65px; }
   .onboarding-nudge-steps { gap: 8px; font-size: 10px; }
   .onboarding-nudge-steps span { gap: 5px; }
 }
+
+
+/* Forma visual refresh — contraste y jerarquía claramente visibles */
+:root {
+  --forma-ink: #183b2b;
+  --forma-ink-soft: #385745;
+  --forma-muted: #718276;
+  --forma-canvas: #f1f4ed;
+  --forma-surface: #ffffff;
+  --forma-line: #dce5d8;
+  --forma-primary: #286342;
+  --forma-primary-hover: #1d5034;
+  --forma-primary-soft: #e1eddf;
+  --forma-lime: #d8ef92;
+  --forma-radius-sm: 14px;
+  --forma-radius-md: 20px;
+  --forma-radius-lg: 30px;
+  --forma-shadow-card: 0 10px 30px rgba(24, 59, 43, .07);
+  --forma-shadow-hover: 0 18px 38px rgba(24, 59, 43, .12);
+}
+
+html body { background: var(--forma-canvas); color: var(--forma-ink); }
+.app-shell, .main-content { background: var(--forma-canvas); }
+.sidebar {
+  background: #f8faf5;
+  border-right: 1px solid #dce6d8;
+  box-shadow: 8px 0 34px rgba(24, 59, 43, .035);
+}
+.brand-mark {
+  background: #dcebd7;
+  color: #245b3b;
+  box-shadow: inset 0 0 0 1px rgba(40, 99, 66, .08);
+}
+.brand strong { color: #183b2b; }
+.nav-item { border-radius: 13px; }
+.nav-item.active {
+  background: #214f35;
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(33, 79, 53, .16);
+}
+.nav-item.active svg { color: #d8ef92; }
+.nav-item:not(.active):hover { background: #e8efe4; color: #214f35; }
+.privacy-note {
+  background: linear-gradient(145deg, #edf4e8, #f9fbf6);
+  border-color: #d9e5d3;
+}
+.main-content { min-width: 0; }
+.topbar {
+  border-bottom: 1px solid rgba(220, 230, 216, .92);
+  background: rgba(250, 252, 248, .94);
+  box-shadow: 0 3px 18px rgba(24, 59, 43, .025);
+}
+.page-content { max-width: 1360px; }
+h1, h2, h3 { color: #183b2b; }
+.eyebrow { color: #548063; }
+.hero-panel {
+  position: relative;
+  isolation: isolate;
+  min-height: 310px;
+  padding: 42px;
+  overflow: hidden;
+  border: 1px solid #d1e0cb;
+  border-radius: 30px;
+  background:
+    radial-gradient(ellipse at 86% 16%, rgba(216, 239, 146, .66), transparent 29%),
+    radial-gradient(ellipse at 100% 100%, rgba(139, 180, 128, .22), transparent 42%),
+    linear-gradient(115deg, #ffffff 0%, #f4f8ee 49%, #e6f0df 100%);
+  box-shadow: 0 14px 36px rgba(31, 74, 47, .075);
+}
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #d8ef92, #3d8155);
+}
+.hero-copy h1 { max-width: 570px; color: #183b2b; }
+.hero-copy h1 span { color: #286342; }
+.hero-description { color: #64796a; }
+.hero-sun { background: rgba(216, 239, 146, .56); }
+.hero-leaf {
+  border-color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 16px 38px rgba(31, 74, 47, .14);
+}
+.primary-button, .auth-submit {
+  background: #286342;
+  box-shadow: 0 5px 13px rgba(40, 99, 66, .15);
+}
+.primary-button:hover, .auth-submit:hover:not(:disabled) {
+  background: #1d5034;
+  box-shadow: 0 8px 18px rgba(40, 99, 66, .2);
+  transform: translateY(-1px);
+}
+.secondary-button {
+  border-color: #d5e2d0;
+  background: #fff;
+  color: #286342;
+}
+.section-heading { margin-top: 40px; }
+.metric-card, .feature-card, .calendar-card, .workout-planner,
+.workout-history-card, .meal-planner-section, .settings-card,
+.progress-setup-card, .nutrition-summary, .meal-log-card,
+.shopping-list-section, .progress-overview-card {
+  border: 1px solid #dce5d8;
+  border-radius: 20px;
+  background-color: #fff;
+  box-shadow: 0 9px 26px rgba(24, 59, 43, .055);
+}
+.metric-card {
+  position: relative;
+  padding: 23px;
+  gap: 12px;
+}
+.metric-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 20px 0 0 20px;
+  background: #c8dfb9;
+}
+.metric-card:hover, .feature-card:hover, .recipe-entry-card:hover {
+  border-color: #b8d0b1;
+  box-shadow: 0 17px 34px rgba(24, 59, 43, .105);
+  transform: translateY(-3px);
+}
+.metric-icon { background: #e4efdc; color: #286342; }
+.protein-metric .metric-icon { background: #dcecdf; color: #286342; }
+.metric-number { color: #183b2b; }
+.progress-track { height: 8px; background: #e9eee5; }
+.progress-track > span { background: #d4a75e; }
+.protein-metric .progress-track > span, .protein-progress { background: #438456; }
+.feature-card { padding: 21px; border-radius: 18px; }
+.feature-icon.sage { background: #e1eddf; color: #286342; }
+.feature-icon.warm { background: #fbefd9; color: #94682d; }
+.week-day.selected {
+  border-color: #286342;
+  background: #e1eddf;
+  box-shadow: inset 0 0 0 1px rgba(40, 99, 66, .08);
+}
+.filter-pill.active, .focus-option.selected {
+  border-color: #c6dcc0;
+  background: #e1eddf;
+  color: #245b3b;
+}
+.exercise-card, .recipe-entry-card, .meal-entry-card,
+.workout-session-card, .measurement-card {
+  border-color: #dce5d8;
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(24, 59, 43, .035);
+}
+.text-input:focus, .form-field input:focus, .form-field select:focus,
+.form-field textarea:focus {
+  border-color: #75a57d;
+  box-shadow: 0 0 0 4px rgba(40, 99, 66, .11);
+}
+.modal-backdrop { background: rgba(19, 42, 28, .38); }
+.modal-panel {
+  border-color: #dce5d8;
+  border-radius: 26px;
+  box-shadow: 0 28px 90px rgba(19, 42, 28, .24);
+}
+.auth-screen {
+  background:
+    radial-gradient(ellipse at 14% 12%, rgba(216, 239, 146, .36), transparent 34%),
+    radial-gradient(ellipse at 87% 82%, rgba(189, 215, 177, .36), transparent 34%),
+    #f1f4ed;
+}
+.auth-card {
+  border-color: #dce5d8;
+  box-shadow: 0 26px 76px rgba(24, 59, 43, .11);
+}
+.onboarding-nudge {
+  border-color: #cbdcc3;
+  background:
+    radial-gradient(circle at 94% 8%, rgba(216, 239, 146, .48), transparent 30%),
+    linear-gradient(125deg, #eaf3e5, #fff 74%);
+  box-shadow: 0 10px 28px rgba(24, 59, 43, .07);
+}
+@media (max-width: 760px) {
+  .topbar {
+    background: rgba(250, 252, 248, .97);
+    box-shadow: 0 3px 18px rgba(24, 59, 43, .035);
+  }
+  .mobile-nav {
+    background: rgba(250, 252, 248, .97);
+    border-top-color: #dce5d8;
+    box-shadow: 0 -9px 28px rgba(24, 59, 43, .08);
+  }
+  .mobile-item.active { background: #214f35; color: #fff; }
+  .mobile-item.active svg { color: #d8ef92; }
+  .hero-panel { min-height: 270px; padding: 27px 24px; }
+  .metric-card { padding: 17px; }
+}
