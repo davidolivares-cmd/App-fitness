@@ -1,4 +1,4 @@
-import React from 'react';
+// HEMOS ELIMINADO EL 'import React from "react"' PARA EVITAR EL ERROR DE LINTING
 
 interface FormiProps {
   calories: number;
@@ -34,7 +34,6 @@ export const FormiAvatar = ({ calories, targetCalories, workoutDone, protein, ta
       <div className="formi-bubble">
         <p>{message}</p>
       </div>
-      {/* Asegúrate de tener estas imágenes en /public/assets/formi/ */}
       <img 
         src={`/assets/formi/${state}.png`} 
         alt="Formi Mascot" 
